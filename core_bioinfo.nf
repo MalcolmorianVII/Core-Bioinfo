@@ -69,3 +69,99 @@ process todolist {
 }
 
 
+// Processing the sequencing data
+
+process mv_dir {
+    tag "Move SARS-CoV2 run from Minknow directory"
+
+    input:
+    path minknw
+    path minruns
+
+    output:
+    stdout 
+
+    script:
+    """
+    mv ${minknw} ${minruns}
+    chown -R phil:phil ${minruns}
+    """
+
+}
+
+process basecaller {
+    tag "Performing Basecalling with Guppy"
+
+    input:
+    path minruns
+    
+    output:
+    stdout
+
+    script:
+    """
+    cd ${minruns}
+    ~/programs/ont-guppy/ont-guppy/bin/guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i fast5 -s fastq
+    """
+}
+
+process barcoding {
+    tag "Barcode the samples"
+
+    output:
+    stdout
+
+    script:
+    """
+    ~/programs/ont-guppy/ont-guppy/bin/guppy_barcoder -r -q 0 --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i fastq -s fastq_pass
+    """
+}
+
+process medaka_py {
+    tag "Modify medaka script"
+
+    input:
+    path medaka
+
+    output:
+    stdout
+
+    script:
+    """
+    MOdify line 48 
+    ~/scripts/covid/artic_covid_medaka.py
+    """
+}
+
+process artic {
+    tag "Consensus sequence"
+    conda "artic_new10"
+    input:
+    path medaka
+
+    output:
+    stdout emit:artic_out
+
+    script:
+    """
+    mkdir work && cd work
+    python ~/scripts/covid/artic_covid_medaka.py
+    """
+}
+
+process pangolin {
+    tag "Running pangolin"
+
+    input:
+    file artic_out
+
+    output:
+    file pango_lineage
+
+    script:
+    """
+    pangolin --outfile 20220620_1115_MN33881_FAQ93003_a6746e26.pangolin.lineage_report.csv 20220620_1115_MN33881_FAQ93003_a6746e26.consensus.fasta
+    """
+}
+
+
