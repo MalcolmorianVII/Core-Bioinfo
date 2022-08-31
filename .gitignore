@@ -2,3 +2,4 @@ nextflow.config
 .nextflow*
 work
 *.sh
+*.csv
