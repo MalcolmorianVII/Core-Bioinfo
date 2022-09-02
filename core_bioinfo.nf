@@ -189,19 +189,6 @@ process pcr_results {
     """
 }
 
-// process todolist {
-//     tag "Run add_samples.sh"
-//     conda "/home/bkutambe/miniconda3/envs/seqbox"
-
-//     output:
-//     stdout 
-
-//     script:
-//     """
-//     bash ${params.add_samples}
-//     """
-// }
-
 process query_db {
 
     input:
