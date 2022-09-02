@@ -203,9 +203,6 @@ process query_db {
     """
 }
 
-// process mail {
-
-// }
 
 // Processing the sequencing data
 
