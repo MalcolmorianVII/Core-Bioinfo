@@ -1,6 +1,3 @@
-nextflow.enable.dsl=2
-// include { } from "todo_list.nf"
-
 workflow {
 //   make_seq_seqbox_input(params.seq_in_py) | view
 //   add_raw_sequencing_batches(params.seq_py) | view
@@ -12,7 +9,7 @@ workflow {
 //   add_readset_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config) | view
 //   add_artic_consensus_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config) | view
 //   add_artic_covid_results(params.seq_py) | view
-  add_pangolin_results(params.seq_py) | view
+//   add_pangolin_results(params.seq_py) | view
 }
 
 process make_seq_seqbox_input {
@@ -36,6 +33,7 @@ process add_raw_sequencing_batches {
 
     input:
     path seq_py
+    val make_seq_seqbox_input
 
     output:
     stdout 
@@ -52,6 +50,7 @@ process add_readset_batches {
 
     input:
     path seq_py
+    val make_seq_seqbox_input
 
     output:
     stdout 
@@ -68,6 +67,7 @@ process add_extractions {
 
     input:
     path seq_py
+    val make_seq_seqbox_input
 
     output:
     stdout 
@@ -84,6 +84,7 @@ process add_covid_confirmatory_pcrs {
 
     input:
     path seq_py
+    val make_seq_seqbox_input
 
     output:
     stdout 
@@ -100,6 +101,7 @@ process add_tiling_pcrs {
 
     input:
     path seq_py
+    val make_seq_seqbox_input
 
     output:
     stdout 
@@ -116,6 +118,7 @@ process add_readsets {
 
     input:
     path seq_py
+    val make_seq_seqbox_input
 
     output:
     stdout 
@@ -133,6 +136,7 @@ process add_readset_to_filestructure {
     input:
     path file_inhandling_py
     path gpu2_config
+    val make_seq_seqbox_input
 
     output:
     stdout 
@@ -150,6 +154,7 @@ process add_artic_consensus_to_filestructure {
     input:
     path file_inhandling_py
     path gpu2_config
+    val add_readset_to_filestructure
 
     output:
     stdout 
@@ -166,6 +171,7 @@ process add_artic_covid_results {
 
     input:
     path seq_py
+    val add_artic_consensus_to_filestructure 
 
     output:
     stdout 
@@ -182,6 +188,7 @@ process add_pangolin_results {
 
     input:
     path seq_py
+    val add_artic_covid_results
 
     output:
     stdout 

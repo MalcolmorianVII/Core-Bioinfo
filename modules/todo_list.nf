@@ -23,13 +23,12 @@ where species = 'SARS-CoV-2'
 order by sample.year_received desc, sample.month_received desc, sample.day_received desc;
     '''
     ch_db = channel.fromQuery(query,db:'seq_db',emitColumns:true)
-    ch_infiles = Channel.fromPath(params.infiles,checkIfExists:true)
     ch_api = Channel.fromPath(params.api,checkIfExists:true)
     myFile = file("/home/bkutambe/Documents/Core_Bioinfo/seq_query.csv")
 
-    date = new Date().format('yyyy.MM.dd')
-    mk_today(date,ch_infiles) | view
-    query_api(date,ch_api,ch_infiles)
+    // date = new Date().format('yyyy.MM.dd')
+    // mk_today(date,params.infiles) | view
+    // query_api(date,ch_api,params.infiles)
     sample_sources(query_api.out,params.seq_py) | view
     samples(query_api.out,params.seq_py,sample_sources.out) | view
     pcr_results(query_api.out,params.seq_py,samples.out) | view
@@ -110,7 +109,7 @@ process samples {
 process pcr_results {
     // errorStrategy 'ignore'
     conda "/home/bkutambe/miniconda3/envs/seqbox"
-    
+
     input:
     file covid_cases
     path seq
