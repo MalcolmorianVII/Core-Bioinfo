@@ -26,10 +26,10 @@ order by sample.year_received desc, sample.month_received desc, sample.day_recei
     ch_infiles = Channel.fromPath(params.infiles,checkIfExists:true)
     ch_api = Channel.fromPath(params.api,checkIfExists:true)
     myFile = file("/home/bkutambe/Documents/Core_Bioinfo/seq_query.csv")
-    
-    today()
-    mk_today(ch_infiles,today.out) | view
-    query_api(ch_api,today.out,ch_infiles)
+
+    date = new Date().format('yyyy.MM.dd')
+    mk_today(date,ch_infiles) | view
+    query_api(date,ch_api,ch_infiles)
     sample_sources(query_api.out,params.seq_py) | view
     samples(query_api.out,params.seq_py,sample_sources.out) | view
     pcr_results(query_api.out,params.seq_py,samples.out) | view
@@ -37,25 +37,13 @@ order by sample.year_received desc, sample.month_received desc, sample.day_recei
 
 }
 
-process today {
-    tag "Get todays date"
-    
-    output:
-    stdout emit: day
-
-    script:
-    """
-    echo -n \$(date +"%Y.%m.%d")
-    """
-
-}
-
 process mk_today {
     tag "Make todays folder"
     
     input:
-    path seq_dir
     val day
+    path seq_dir
+    
     output:
     stdout
 
@@ -68,9 +56,10 @@ process mk_today {
 
 process query_api {
     publishDir "${seq_dir}/${day}", mode: 'copy'
+
     input:
-    path api
     val day
+    path api
     val seq_dir
 
     output:
@@ -85,6 +74,7 @@ process query_api {
 process sample_sources {
     errorStrategy 'ignore'
     conda "/home/bkutambe/miniconda3/envs/seqbox"
+
     input:
     file covid_cases
     path seq
@@ -101,6 +91,7 @@ process sample_sources {
 process samples {
     errorStrategy 'ignore'
     conda "/home/bkutambe/miniconda3/envs/seqbox"
+
     input:
     file covid_cases
     path seq
@@ -119,6 +110,7 @@ process samples {
 process pcr_results {
     // errorStrategy 'ignore'
     conda "/home/bkutambe/miniconda3/envs/seqbox"
+    
     input:
     file covid_cases
     path seq
