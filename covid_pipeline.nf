@@ -1,6 +1,7 @@
 nextflow.enable.dsl=2
 include { fromQuery } from 'plugin/nf-sqldb'
 include  { mk_today;query_api;sample_sources;samples;pcr_results;query_db } from './modules/todo_list'
+include { mv_dir;basecaller;barcoding;artic;pangolin } from './modules/process_seq_data'
 include {
     make_seq_seqbox_input;
     add_raw_sequencing_batches;
@@ -47,7 +48,15 @@ workflow GENERATE_TODO_LIST {
     query_db(ch_db,myFile,pcr_results.out) | view
 }
 
-workflow SEQ_DATA {
+workflow PROCESS_SEQ_DATA {
+    mv_dir(params.minknw,params.minruns)
+    basecaller(params.minruns,mv_dir.out)
+    barcoding(params.minruns,basecaller.out)
+    artic(params.minruns,params.run,barcoding.out) | view
+    pangolin(params.minruns,params.run,artic.out) | view
+}
+
+workflow ADD_SEQ_DATA {
     make_seq_seqbox_input(params.seq_in_py) | view
     add_raw_sequencing_batches(params.seq_py,make_seq_seqbox_input.out) | view
     add_readset_batches(params.seq_py,make_seq_seqbox_input.out) | view
@@ -65,7 +74,11 @@ workflow {
     if (params.choice == 1) {
         GENERATE_TODO_LIST()
     } else if (params.choice == 2) {
-        SEQ_DATA()
+        PROCESS_SEQ_DATA()
+    }else if (params.choice == 3) {
+        ADD_SEQ_DATA()
+    } else {
+        println "Error:Invalid choice"
     }
 }
 
