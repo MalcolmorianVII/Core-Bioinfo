@@ -73,6 +73,7 @@ process artic {
     input:
     path minruns
     val run
+    val barcoding 
 
     output:
     stdout emit:artic_out
@@ -87,9 +88,11 @@ process artic {
 process pangolin {
     tag "Running pangolin"
     conda "/home/bkutambe/miniconda3/envs/pangolin"
+    
     input:
     path minruns
     val run
+    val artic
 
     output:
     stdout
