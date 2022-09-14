@@ -1,7 +1,7 @@
 nextflow.enable.dsl=2
 include { fromQuery } from 'plugin/nf-sqldb'
 include  { mk_today;query_api;sample_sources;samples;pcr_results;query_db } from './modules/todo_list'
-include { mv_dir;basecaller;barcoding;artic;pangolin } from './modules/process_seq_data'
+include { mv_dir;basecalling;barcoding;artic;pangolin } from './modules/process_seq_data'
 include {
     make_seq_seqbox_input;
     add_raw_sequencing_batches;
@@ -39,6 +39,7 @@ workflow GENERATE_TODO_LIST {
     date = new Date().format('yyyy.MM.dd')
     ch_api = Channel.fromPath(params.api,checkIfExists:true)
     ch_db = channel.fromQuery(query,db:'seq_db',emitColumns:true)
+    myFile = file("/home/bkutambe/Documents/Core_Bioinfo/seq_query.csv")
 
     mk_today(date,params.infiles) | view
     query_api(date,ch_api,params.infiles)
@@ -49,11 +50,11 @@ workflow GENERATE_TODO_LIST {
 }
 
 workflow PROCESS_SEQ_DATA {
-    mv_dir(params.minknw,params.minruns)
-    basecaller(params.minruns,mv_dir.out)
-    barcoding(params.minruns,basecaller.out)
-    artic(params.minruns,params.run,barcoding.out) | view
-    pangolin(params.minruns,params.run,artic.out) | view
+    mv_dir(params.minknw)
+    basecalling(mv_dir.out)
+    barcoding(basecalling.out)
+    artic(barcoding.out) | view
+    pangolin(artic.out) | view
 }
 
 workflow ADD_SEQ_DATA {
