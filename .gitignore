@@ -3,3 +3,4 @@ nextflow.config
 work
 *.sh
 *.csv
+Main.java
