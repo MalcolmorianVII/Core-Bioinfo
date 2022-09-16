@@ -1,19 +1,20 @@
+nextflow.enable.dsl=2
+
 workflow {
-//   make_seq_seqbox_input(params.seq_in_py) | view
-//   add_raw_sequencing_batches(params.seq_py) | view
-//   add_readset_batches(params.seq_py) | view
-//   add_extractions(params.seq_py) | view
-//   add_covid_confirmatory_pcrs(params.seq_py) | view
-//   add_tiling_pcrs(params.seq_py)| view
-//   add_readsets(params.seq_py) | view
-//   add_readset_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config) | view
-//   add_artic_consensus_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config) | view
-//   add_artic_covid_results(params.seq_py) | view
-//   add_pangolin_results(params.seq_py) | view
+  make_seq_seqbox_input(params.seq_in_py) | view
+  add_raw_sequencing_batches(params.seq_py) | view
+  add_readset_batches(params.seq_py) | view
+  add_extractions(params.seq_py) | view
+  add_covid_confirmatory_pcrs(params.seq_py) | view
+  add_tiling_pcrs(params.seq_py)| view
+  add_readsets(params.seq_py) | view
+  add_readset_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config) | view
+  add_artic_consensus_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config) | view
+  add_artic_covid_results(params.seq_py) | view
+  add_pangolin_results(params.seq_py) | view
 }
 
 process make_seq_seqbox_input {
-    tag "Make seqbox input"
 
     input:
     val inseq
@@ -28,7 +29,6 @@ process make_seq_seqbox_input {
 }
 
 process add_raw_sequencing_batches {
-    tag "Add_raw_sequencing_batches"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
@@ -45,7 +45,6 @@ process add_raw_sequencing_batches {
 }
 
 process add_readset_batches {
-    tag "Add_readset_batches"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
@@ -62,7 +61,6 @@ process add_readset_batches {
 }
 
 process add_extractions {
-    tag "add_extractions"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
@@ -79,7 +77,6 @@ process add_extractions {
 }
 
 process add_covid_confirmatory_pcrs {
-    tag "Add_covid_confirmatory_pcrs"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
@@ -96,7 +93,6 @@ process add_covid_confirmatory_pcrs {
 }
 
 process add_tiling_pcrs {
-    tag "Add_tiling_pcrs"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
@@ -113,7 +109,6 @@ process add_tiling_pcrs {
 }
 
 process add_readsets {
-    tag "Add_readsets"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
@@ -130,7 +125,6 @@ process add_readsets {
 }
 
 process add_readset_to_filestructure {
-    tag "Add_readset_to_filestructure"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
@@ -148,7 +142,6 @@ process add_readset_to_filestructure {
 }
 
 process add_artic_consensus_to_filestructure {
-    tag "Add_artic_consensus_to_filestructure"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
     
     input:
@@ -166,7 +159,6 @@ process add_artic_consensus_to_filestructure {
 }
 
 process add_artic_covid_results {
-    tag "Add_artic_covid_results"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
@@ -183,7 +175,6 @@ process add_artic_covid_results {
 }
 
 process add_pangolin_results {
-    tag "Add_pangolin_results"
     conda "/home/bkutambe/miniconda3/envs/seqbox"
 
     input:
