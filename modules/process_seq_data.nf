@@ -2,11 +2,11 @@ nextflow.enable.dsl=2
 
 workflow {
 
-    // mv_dir(params.minknw)
-    // basecaller(mv_dir.out)
-    // barcoding(basecaller.out)
+    mv_dir(params.minknw)
+    basecalling(mv_dir.out)
+    barcoding(basecalling.out)
     artic(barcoding.out) | view
-    pangolin(pangolin.out) | view
+    pangolin(artic.out) | view
 }
 
 
@@ -60,13 +60,13 @@ process barcoding {
 
 process artic {
     tag "Consensus sequence"
-    conda "/home/bkutambe/miniconda3/envs/artic_new10"
+    conda "/home/phil/miniconda3/envs/artic_new10"
 
     input:
     val barcoding 
 
     output:
-    stdout emit:artic_out
+    stdout 
 
     script:
     """
