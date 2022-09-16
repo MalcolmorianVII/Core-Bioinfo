@@ -4,3 +4,5 @@ work
 *.sh
 *.csv
 Main.java
+modules/*.xlsx
+modules/*yml
