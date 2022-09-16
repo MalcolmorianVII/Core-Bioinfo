@@ -4,11 +4,6 @@ import os
 import argparse
 import sys
 
-def get_seqbox_export(query,outfile):
-       df = pd.read_sql(query,con)
-       # print(df)
-       df.to_excel(outfile,index=False)
-
 todolist_query = """
        select sample.sample_identifier, sample.day_received, sample.month_received, sample.year_received, pr.pcr_result as qech_pcr_result, pr.ct as original_ct, project_name, e.extraction_identifier, DATE(e.date_extracted) as date_extracted, ccp.pcr_identifier, DATE(ccp.date_pcred) as date_covid_confirmatory_pcred,
        ccp.ct as covid_confirmation_pcr_ct, tp.pcr_identifier as tiling_pcr_identifier, DATE(tp.date_pcred) as date_tiling_pcrer, rsb.name as read_set_batch_name, r.readset_identifier, acr.pct_covered_bases
@@ -55,6 +50,10 @@ sequence_run_info_query = """
            ) as foo
        order by sample_identifier, pct_covered_bases desc NULLS LAST
        """
+       
+def get_seqbox_export(query,outfile):
+       df = pd.read_sql(query,con)
+       df.to_excel(outfile,index=False)
 
 def run_command(args):
        if args.command == "get_todolist":
