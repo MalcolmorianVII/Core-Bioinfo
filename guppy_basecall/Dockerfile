@@ -1,22 +1,32 @@
-FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04 as base
-CMD nvidia-smi
-
-# Set the base image to Ubuntu 18.04 and NVIDIA GPU
-# FROM nvidia/cuda:11.1-base-ubuntu18.04
+FROM ubuntu as base
 
 # File Author / Maintainer
-LABEL Laurent Jourdren <jourdren@biologie.ens.fr>
+LABEL Belson Malcolm Kutambe
+# Install & configure docker 
+RUN apt-get update
+RUN apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+RUN echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update
+RUN sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-ARG PACKAGE_VERSION=6.0.1
-ARG BUILD_PACKAGES="wget apt-transport-https"
-ARG DEBIAN_FRONTEND=noninteractive
+# Install miniconda
+RUN docker pull continuumio/miniconda
 
-RUN apt update && \
-    apt install --yes $BUILD_PACKAGES libnvidia-compute-460-server && \ 
-    cd /tmp && \
-    wget -q https://mirror.oxfordnanoportal.com/software/analysis/ont_guppy_${PACKAGE_VERSION}-1~bionic_amd64.deb && \
-    apt install --yes /tmp/ont_guppy_${PACKAGE_VERSION}-1~bionic_amd64.deb && \
-    rm *.deb && \
-    apt-get autoremove --purge --yes && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /home/nextflow/scripts
+
+COPY ../modules/process_seq_data.nf /home/nextflow/scripts
+COPY ../modules/nextflow.config /home/nextflow/scripts
+
+RUN docker pull nextflow/nextflow
+
+
+
+
