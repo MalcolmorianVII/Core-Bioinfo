@@ -60,7 +60,7 @@ process barcoding {
 
 process artic {
     tag "Consensus sequence"
-    conda "/home/phil/miniconda3/envs/artic_new10"
+    conda "/home/bkutambe/miniconda3/envs/artic_new10"
 
     input:
     val barcoding 
