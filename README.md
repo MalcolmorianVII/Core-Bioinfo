@@ -11,6 +11,3 @@ Use the following command:
 * Combine the sequencing data with the sample information 
 Use the following command:
 `nextflow run covid_pipeline.nf --choice 3`
-
-This build does not support GPU barcoding acceleration.
-docker.runOptions = "-v ${env.WORKDIR}/${env.BATCH}:/batch"
