@@ -1,19 +1,19 @@
-nextflow.enable.dsl=2
+// nextflow.enable.dsl=2
 
-workflow {
-    make_seq_seqbox_input(params.make_seqbox_input_py) | view
-    add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out) | view
-    add_readset_batches(params.seqbox_cmd_py,add_raw_sequencing_batches.out) | view
-    add_extractions(params.seqbox_cmd_py,add_readset_batches.out) | view
-    add_covid_confirmatory_pcrs(params.seqbox_cmd_py,add_extractions.out) | view
-    add_tiling_pcrs(params.seqbox_cmd_py,add_covid_confirmatory_pcrs.out)| view
-    add_readsets(params.seqbox_cmd_py,add_tiling_pcrs.out) | view
-    add_readset_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readsets.out) | view
-    add_artic_consensus_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readset_to_filestructure.out) | view
-    add_artic_covid_results(params.seqbox_cmd_py,add_artic_consensus_to_filestructure.out) | view
-    add_pangolin_results(params.seqbox_cmd_py,add_artic_covid_results.out) | view
-    get_sequence_run_info(add_pangolin_results.out) | view
-}
+// workflow {
+//     make_seq_seqbox_input(params.make_seqbox_input_py) | view
+//     add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out) | view
+//     add_readset_batches(params.seqbox_cmd_py,add_raw_sequencing_batches.out) | view
+//     add_extractions(params.seqbox_cmd_py,add_readset_batches.out) | view
+//     add_covid_confirmatory_pcrs(params.seqbox_cmd_py,add_extractions.out) | view
+//     add_tiling_pcrs(params.seqbox_cmd_py,add_covid_confirmatory_pcrs.out)| view
+//     add_readsets(params.seqbox_cmd_py,add_tiling_pcrs.out) | view
+//     add_readset_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readsets.out) | view
+//     add_artic_consensus_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readset_to_filestructure.out) | view
+//     add_artic_covid_results(params.seqbox_cmd_py,add_artic_consensus_to_filestructure.out) | view
+//     add_pangolin_results(params.seqbox_cmd_py,add_artic_covid_results.out) | view
+//     get_sequence_run_info(add_pangolin_results.out) | view
+// }
 
 process make_seq_seqbox_input {
 
