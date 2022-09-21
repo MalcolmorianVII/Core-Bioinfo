@@ -46,7 +46,7 @@ process query_api {
 }
 
 process sample_sources {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     file covid_cases
@@ -62,7 +62,7 @@ process sample_sources {
 }
 
 process samples {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     file covid_cases
@@ -79,7 +79,7 @@ process samples {
 }
 
 process pcr_results {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     file covid_cases

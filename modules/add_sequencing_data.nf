@@ -30,7 +30,7 @@ process make_seq_seqbox_input {
 }
 
 process add_raw_sequencing_batches {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path seqbox_cmd_py
@@ -46,7 +46,7 @@ process add_raw_sequencing_batches {
 }
 
 process add_readset_batches {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path seqbox_cmd_py
@@ -62,7 +62,7 @@ process add_readset_batches {
 }
 
 process add_extractions {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path seqbox_cmd_py
@@ -78,7 +78,7 @@ process add_extractions {
 }
 
 process add_covid_confirmatory_pcrs {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path seqbox_cmd_py
@@ -94,7 +94,7 @@ process add_covid_confirmatory_pcrs {
 }
 
 process add_tiling_pcrs {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path seqbox_cmd_py
@@ -110,7 +110,7 @@ process add_tiling_pcrs {
 }
 
 process add_readsets {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path seqbox_cmd_py
@@ -126,7 +126,7 @@ process add_readsets {
 }
 
 process add_readset_to_filestructure {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path file_inhandling_py
@@ -143,7 +143,7 @@ process add_readset_to_filestructure {
 }
 
 process add_artic_consensus_to_filestructure {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
     
     input:
     path file_inhandling_py
@@ -160,7 +160,7 @@ process add_artic_consensus_to_filestructure {
 }
 
 process add_artic_covid_results {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path seqbox_cmd_py
@@ -176,7 +176,7 @@ process add_artic_covid_results {
 }
 
 process add_pangolin_results {
-    conda "/home/bkutambe/miniconda3/envs/seqbox"
+    label "seqbox"
 
     input:
     path seqbox_cmd_py

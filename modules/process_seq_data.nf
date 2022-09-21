@@ -29,6 +29,7 @@ process mv_dir {
 
 process basecalling {
     tag "Performing Basecalling with Guppy"
+    label "guppy"
 
     input:
     val mv
@@ -38,12 +39,13 @@ process basecalling {
 
     script:
     """
-    docker run --gpus all --rm -v ${WORKDIR}/${BATCH}:/batch genomicpariscentre/guppy-gpu guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i /batch/fast5 -s /batch/fastq
+    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i /tmp/fast5 -s /tmp/fastq
     """
 }
 
 process barcoding {
     tag "Barcode the samples"
+    label "guppy"
 
     input:
     val basecalling
@@ -53,14 +55,13 @@ process barcoding {
 
     script:
     """
-    docker run --gpus all --rm -v ${WORKDIR}/${BATCH}:/batch genomicpariscentre/guppy-gpu guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i /batch/fastq -s /batch/fastq_pass
+    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i /tmp/fastq -s /tmp/fastq_pass
     """
 }
 
 
 process artic {
     tag "Consensus sequence"
-    conda "/home/bkutambe/miniconda3/envs/artic_new10"
 
     input:
     val barcoding 
@@ -77,7 +78,6 @@ process artic {
 
 process pangolin {
     tag "Assign lineages"
-    conda "/home/bkutambe/miniconda3/envs/pangolin"
     
     input:
     val artic
