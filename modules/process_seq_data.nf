@@ -78,7 +78,6 @@ process artic {
 
 process pangolin {
     tag "Assign lineages"
-    conda "/home/bkutambe/miniconda3/envs/pangolin"
     
     input:
     val artic
