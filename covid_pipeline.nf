@@ -12,7 +12,8 @@ include {
     add_readset_to_filestructure;
     add_artic_consensus_to_filestructure;
     add_artic_covid_results;
-    add_pangolin_results } from './modules/add_sequencing_data'
+    add_pangolin_results;
+    get_sequence_run_info } from './modules/add_sequencing_data'
 
 workflow GENERATE_TODO_LIST {
     ch_api = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
