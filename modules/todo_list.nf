@@ -1,15 +1,15 @@
-nextflow.enable.dsl=2
+// nextflow.enable.dsl=2
 
-workflow {
-    ch_api = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
-    date = new Date().format('yyyy.MM.dd')
-    mk_today(date,params.infiles) | view
-    query_api(date,ch_api,params.infiles) | view 
-    sample_sources(query_api.out,params.seqbox_cmd_py) | view
-    samples(query_api.out,params.seqbox_cmd_py,sample_sources.out) | view
-    pcr_results(query_api.out,params.seqbox_cmd_py,samples.out) | view
-    query_db(pcr_results.out,date,params.infiles) | view
-}
+// workflow {
+//     ch_api = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
+//     date = new Date().format('yyyy.MM.dd')
+//     mk_today(date,params.infiles) | view
+//     query_api(date,ch_api,params.infiles) | view 
+//     sample_sources(query_api.out,params.seqbox_cmd_py) | view
+//     samples(query_api.out,params.seqbox_cmd_py,sample_sources.out) | view
+//     pcr_results(query_api.out,params.seqbox_cmd_py,samples.out) | view
+//     query_db(pcr_results.out,date,params.infiles) | view
+// }
 
 process mk_today {
     tag "Make directory with todays date as name"

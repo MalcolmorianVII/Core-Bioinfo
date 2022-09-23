@@ -1,13 +1,13 @@
-nextflow.enable.dsl=2
+// nextflow.enable.dsl=2
 
-workflow {
+// workflow {
 
-    mv_dir(params.minknw)
-    basecalling(mv_dir.out)
-    barcoding(basecalling.out)
-    artic(barcoding.out) | view
-    pangolin(artic.out) | view
-}
+//     mv_dir(params.minknw)
+//     basecalling(mv_dir.out)
+//     barcoding(basecalling.out)
+//     artic(barcoding.out) | view
+//     pangolin(artic.out) | view
+// }
 
 
 process mv_dir {
