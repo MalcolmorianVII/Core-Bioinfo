@@ -49,27 +49,8 @@ workflow ADD_SEQ_DATA {
     get_sequence_run_info(add_pangolin_results.out) | view
 }
 
-workflow {
-
-    switch(params.choice) {
-        case 1:
-            GENERATE_TODO_LIST()
-            break
-        case 2:
-            PROCESS_SEQ_DATA()
-            break
-        case 3:
-            ADD_SEQ_DATA()
-            break
-        default:
-            System.out.println(
-                """Invalid choice.Please use one of these choices:
-                    1: To run the get_todolist subworkflow
-                    2: To run the process_seq_data subworkflow
-                    3: To run the add_seq_data subworkflow
-                """
-                )
-    }
-
+workflow PROCESS_ADD_SEQ_DATA{
+    PROCESS_SEQ_DATA()
+    ADD_SEQ_DATA()
 }
 
