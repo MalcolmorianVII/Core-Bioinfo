@@ -2,7 +2,7 @@
 
 * Clone the github repository
 * Change the following settings in the nextflow.config file
-* * Change the path of scripts  covid scripts to reflect the ones on local computer
+ * Change the path of scripts  covid scripts to reflect the ones on local computer
 * Change the path of infiles,minknow directories and gpu2_seqbox_config file 
 * Change the following env variables:
 * WORKDIR to point to the minion_runs directory
