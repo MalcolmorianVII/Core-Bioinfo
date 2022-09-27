@@ -1,19 +1,20 @@
 # Steps
 
 * Clone the github repository
-* Change the following settings in the nextflow.config file
-    1. Change the path of scripts  covid scripts to reflect the ones on local computer
+* Make the following changes in the nextflow.config file
+## **params scope**:
+    1. Paths of python scripts both in covid and seqbox directories
     2. Change the path of infiles,minknow directories and gpu2_seqbox_config file 
-    3. Change the following env variables:
-WORKDIR to point to the minion_runs directory
-* SEQTRACKER to point to the seqtracker file (in a csv format).For now it set to be in the WORKDIR
-* BATCH to point to the current sequencing batch
-* SEQ_SEQBOX_INPUT_OUTDIR for the dated directory that has been made in the infiles directory which will contain the 
+## env variables:
+    1. WORKDIR to point to the minion_runs directory e.g /home/bkutambe/data/minion_runs
+    2. **BATCH** to point to the current sequencing batch
+    3. **SEQTRACKER** to point to the seqtracker file (in a csv format).For now it set to be in the WORKDIR/BATCH director
+    4. **SEQ_SEQBOX_INPUT_OUTDIR** for the dated directory that has been made in the infiles directory which will contain the following files; raw_sequencing_batches.csv,readset_batches.csv and sequencing.csv
 
+* In the **process scope** we need to change the following:
+**seqbox**,**artic** and **pangolin** processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
 
-In the process scope we need to change the following:
-seqbox,artic and pangolin processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed after by conda env list.Note this should be a complete path not just a name of the conda env otherwise nextflow will start downloading the packages
-
+# Running the pipeline
 
 * Getting the todolist
 `nextflow run covid_pipeline.nf -entry GENERATE_TODO_LIST`
