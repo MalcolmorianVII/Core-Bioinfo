@@ -2,9 +2,9 @@
 
 * Clone the github repository
 * Change the following settings in the nextflow.config file
-1. Change the path of scripts  covid scripts to reflect the ones on local computer
-2. Change the path of infiles,minknow directories and gpu2_seqbox_config file 
-3. Change the following env variables:
+    1. Change the path of scripts  covid scripts to reflect the ones on local computer
+    2. Change the path of infiles,minknow directories and gpu2_seqbox_config file 
+    3. Change the following env variables:
 WORKDIR to point to the minion_runs directory
 * SEQTRACKER to point to the seqtracker file (in a csv format).For now it set to be in the WORKDIR
 * BATCH to point to the current sequencing batch
