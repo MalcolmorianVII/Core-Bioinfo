@@ -14,7 +14,7 @@
 ## 3. In the **process scope**:
     seqbox,artic and pangolin processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
 
-## 4. Running the pipeline
+## Running the pipeline
 
 * Getting the todolist
 `nextflow run covid_pipeline.nf -entry GENERATE_TODO_LIST`
