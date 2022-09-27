@@ -2,19 +2,19 @@
 
 * Clone the github repository
 * Make the following changes in the nextflow.config file
-## **params scope**:
+## 1. In the **params scope** change:
     1. Paths of python scripts both in covid and seqbox directories
-    2. Change the path of infiles,minknow directories and gpu2_seqbox_config file 
-## env variables:
+    2. Path of infiles,minknow directories and gpu2_seqbox_config file 
+## 2. For the env variables change:
     1. WORKDIR to point to the minion_runs directory e.g /home/bkutambe/data/minion_runs
-    2. **BATCH** to point to the current sequencing batch
-    3. **SEQTRACKER** to point to the seqtracker file (in a csv format).For now it set to be in the WORKDIR/BATCH director
-    4. **SEQ_SEQBOX_INPUT_OUTDIR** for the dated directory that has been made in the infiles directory which will contain the following files; raw_sequencing_batches.csv,readset_batches.csv and sequencing.csv
+    2. BATCH to point to the current sequencing batch
+    3. SEQTRACKER to point to the seqtracker file (in a csv format).For now it set to be in the WORKDIR/BATCH director
+    4. SEQ_SEQBOX_INPUT_OUTDIR for the dated directory that has been made in the infiles directory which will contain the following files; raw_sequencing_batches.csv,readset_batches.csv and sequencing.csv
 
-* In the **process scope** we need to change the following:
-**seqbox**,**artic** and **pangolin** processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
+## 3. In the **process scope**:
+    seqbox,artic and pangolin processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
 
-# Running the pipeline
+## 4. Running the pipeline
 
 * Getting the todolist
 `nextflow run covid_pipeline.nf -entry GENERATE_TODO_LIST`
