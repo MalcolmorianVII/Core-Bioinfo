@@ -64,6 +64,7 @@ process artic {
     tag "Consensus sequence"
 
     input:
+    path artic_py
     val barcoding 
 
     output:
@@ -72,7 +73,7 @@ process artic {
     script:
     """
     mkdir -p ${WORKDIR}/${BATCH}/work && cd ${WORKDIR}/${BATCH}/work
-    python ~/Documents/seqbox/covid/artic_covid_medaka.py
+    python ${artic_py}
     """
 }
 

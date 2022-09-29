@@ -30,7 +30,7 @@ workflow PROCESS_SEQ_DATA {
     mv_dir(params.minknw)
     basecalling(mv_dir.out)
     barcoding(basecalling.out)
-    artic(barcoding.out) | view
+    artic(params.artic_covid_medaka_py,barcoding.out) | view
     pangolin(artic.out) | view
 }
 
