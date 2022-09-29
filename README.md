@@ -14,6 +14,8 @@
 ## 3. In the **process scope**:
     seqbox,artic and pangolin processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
 
+**Note:** The artic_covid_medaka.py has code to get the barcodes from the seqtracker rather than entering them manually.This script should be used when running the artic pipeline.The seqtracker should be in a csv format and have a an env variable refering to it in the nextflow.config file
+
 ## Running the pipeline
 
 * Getting the todolist
