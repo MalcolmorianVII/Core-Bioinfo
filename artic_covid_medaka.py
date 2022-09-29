@@ -1,10 +1,7 @@
 import os
-import csv
 import glob
-import subprocess
 import pandas as pd
 from pathlib import Path
-import subprocess
 
 class DuplicationError(Exception):
     pass
@@ -20,14 +17,14 @@ def guppyplex(input_dir, batch_name, max_min):
     if len(fastq) == 0:
         os.system(f"touch error_no_fastq_in_{input_dir.replace('/', '_')}")
         return False
-    subprocess.call(f"artic guppyplex --min-length {max_min[0]} --max-length {max_min[1]} --directory {input_dir} --prefix {batch_name} --out {guppyplex_fastq}",shell=True)
+    os.system(f"artic guppyplex --min-length {max_min[0]} --max-length {max_min[1]} --directory {input_dir} --prefix {batch_name} --out {guppyplex_fastq}")
     return guppyplex_fastq
 
 def artic_minion_medaka(primer_scheme_directory, scheme, barcode, medaka_model, guppyplex_fastq, batch_name):
-    subprocess.call(f'artic minion --medaka --scheme-directory {primer_scheme_directory} --medaka-model {medaka_model} --normalise 200 --threads 4 --read-file {guppyplex_fastq} {scheme} {batch_name}_{barcode}',shell=True)
+    os.system(f'artic minion --medaka --scheme-directory {primer_scheme_directory} --medaka-model {medaka_model} --normalise 200 --threads 4 --read-file {guppyplex_fastq} {scheme} {batch_name}_{barcode}')
 
 def run_qc(barcode, batch_name):
-    subprocess.call(f'python ~/programs/ncov2019-artic-nf/bin/qc.py --nanopore --outfile {batch_name}_{barcode}.qc.csv --sample {batch_name}_{barcode} --ref ~/programs/Path_nCoV/reference/primer-schemes/SARS-CoV-2/V3/SARS-CoV-2.reference.fasta --bam {batch_name}_{barcode}.primertrimmed.rg.sorted.bam --fasta {batch_name}_{barcode}.consensus.fasta',shell=True)
+    os.system(f'python ~/programs/ncov2019-artic-nf/bin/qc.py --nanopore --outfile {batch_name}_{barcode}.qc.csv --sample {batch_name}_{barcode} --ref ~/programs/Path_nCoV/reference/primer-schemes/SARS-CoV-2/V3/SARS-CoV-2.reference.fasta --bam {batch_name}_{barcode}.primertrimmed.rg.sorted.bam --fasta {batch_name}_{barcode}.consensus.fasta')
 
 def run_amplicov(bed_file, barcode, scheme):
     print(f'amplicov --bed {bed_file} --bam {barcode}.primertrimmed.rg.sorted.bam -o amplicov-{scheme} -p {barcode}')
