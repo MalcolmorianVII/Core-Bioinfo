@@ -2,7 +2,8 @@
 
 * Clone the github repository
 * Create the following env variables:
-    ``` export SEQBOX_SCRIPTS="${HOME}/Documents/seqbox/seqbox/src/scripts"
+    ``` 
+        export SEQBOX_SCRIPTS="${HOME}/Documents/seqbox/seqbox/src/scripts"
         export COVID_SCRIPTS="${HOME}/Documents/seqbox/covid"
     ```
 * Make the following changes in the nextflow.config file
