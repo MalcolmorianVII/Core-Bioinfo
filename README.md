@@ -7,9 +7,12 @@
         export COVID_SCRIPTS="${HOME}/Documents/seqbox/covid"
     ```
 * In the nextflow.config file ensure the following changes:
+
 ## 1. The **params scope**:
+
     1. change the values of minknow & gpu2_seqbox_config variables to reflect the latest run directory and the right name of the config.yaml file.
 ## 2. In the env variables scope ensure:
+
     1. BATCH points to the current sequencing batch e.g 20210701_1420_MN33881_FAO36609_5c3b1ea9
     2. SEQTRACKER points to the seqtracker file (in a csv format).For now it set to be in the WORKDIR/BATCH director
     3. SEQ_SEQBOX_INPUT_OUTDIR points the iso-dated directory that has been made in the infiles directory which will contain the following files; raw_sequencing_batches.csv,readset_batches.
