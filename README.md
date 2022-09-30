@@ -11,6 +11,7 @@
 ## 1. The **params scope**:
 
     1. change the values of minknow & gpu2_seqbox_config variables to reflect the latest run directory and the right name of the config.yaml file.
+    
 ## 2. In the env variables scope ensure:
 
     1. BATCH points to the current sequencing batch e.g 20210701_1420_MN33881_FAO36609_5c3b1ea9
