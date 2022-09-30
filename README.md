@@ -3,9 +3,9 @@
 1. Clone the github repository
 2. Create the following bash environment variables that point to:
 
-    a. the scripts directory within the installation of seqbox on your machine e.g. `export SEQBOX_SCRIPTS="/path/to/seqbox/src/scripts"` where the scripts directory corresponds to scripts from [this](https://github.com/flashton2003/seqbox/tree/master/src/scripts) link. 
+    a. `export SEQBOX_SCRIPTS="/path/to/seqbox/src/scripts"` to point to the scripts directory within the installation of seqbox on your machine e.g.  where the scripts directory corresponds to scripts from [this](https://github.com/flashton2003/seqbox/tree/master/src/scripts) link.
     
-    b. the location of the covid analysis scripts e.g. `export COVID_SCRIPTS="/path/to/covid"` where covid corresponds to [this](https://github.com/flashton2003/covid) github repo.
+    b. `export COVID_SCRIPTS="/path/to/covid"` to point to the location of the covid analysis scripts e.g.  where covid corresponds to [this](https://github.com/flashton2003/covid) github repo.
 
 3. In the `nextflow.config` file ensure the following changes:
 
