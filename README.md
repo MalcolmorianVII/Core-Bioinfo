@@ -1,6 +1,9 @@
 # Steps
 
 * Clone the github repository
+* Create the following env variables:
+    1. SEQBOX_SCRIPTS="~/Documents/seqbox/seqbox/src/scripts"
+    2. COVID_SCRIPTS = "~/Documents/seqbox/covid"
 * Make the following changes in the nextflow.config file
 ## 1. In the **params scope** change:
     1. Paths of python scripts both in covid and seqbox directories
