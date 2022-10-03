@@ -16,7 +16,7 @@ include {
     get_sequence_run_info } from './modules/add_sequencing_data'
 
 if (params.mode == "test") {
-    assert  DATABASE_URL.split("/")[-1].startsWith("test"),"please check the database settings"
+    assert  DATABASE_URL.split("/")[-1].startsWith("test"),"please check the database URL"
 } else if (params.mode == "prod"){
     assert ! BATCH.startsWith("test"),"Check the batch data"
 } else {
