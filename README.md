@@ -36,6 +36,6 @@
 `nextflow run main_pipeline.nf -entry ADD_SEQ_DATA`
 
 
-NB:To run the pipeline using **test data** specify the run mode as test.Make sure the test data starts with test keyword and the DATABASE_URL points to the test database.
+Note:To run the pipeline using **test data** specify the run mode as test.Make sure the test data starts with test keyword and the DATABASE_URL points to the test database.
 
 `nextflow run main_pipeline.nf -entry PROCESS_SEQ_DATA --mode test`
