@@ -64,7 +64,7 @@ process artic {
     tag "Consensus sequence"
 
     input:
-    path artic_py
+    val artic_py
     val barcoding 
 
     output:
