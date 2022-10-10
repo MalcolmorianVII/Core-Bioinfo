@@ -35,3 +35,4 @@ The test data & DATABASE_URL need to be checked against to prevent saving it to 
 
 * Combine the sequencing data with the sample information 
 `nextflow run main_pipeline.nf -entry ADD_SEQ_DATA`
+

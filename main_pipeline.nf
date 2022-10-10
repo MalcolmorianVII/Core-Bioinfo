@@ -15,14 +15,11 @@ include {
     add_pangolin_results;
     get_sequence_run_info } from './modules/add_sequencing_data'
 
-// if (params.mode == "test") {
-//     assert  DATABASE_URL.split("/")[-1].startsWith("test"),"please check the database URL"
-// } else if (params.mode == "prod"){
-//     assert ! BATCH.startsWith("test"),"Check the batch data"
-// } else {
-//     println "Provide correct run mode for the pipeline"
-//     System.exit(-1)
-// }
+if (params.mode == "test") {
+    assert  DATABASE_URL.split("/")[-1].startsWith("test"),"please check the database URL"
+} else{
+    assert ! BATCH.startsWith("test"),"Check the batch data"
+}   
 
 workflow GENERATE_TODO_LIST {
     ch_api = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
@@ -58,10 +55,5 @@ workflow ADD_SEQ_DATA {
     get_sequence_run_info(add_pangolin_results.out) | view
 }
 
-workflow PROCESS_ADD_SEQ_DATA{
-    PROCESS_SEQ_DATA()
-    workflow.onComplete {
-        ADD_SEQ_DATA()
-    }  
-}
+
 
