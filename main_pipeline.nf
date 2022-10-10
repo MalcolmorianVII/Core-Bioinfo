@@ -16,9 +16,11 @@ include {
     get_sequence_run_info } from './modules/add_sequencing_data'
 
 if (params.mode == "test") {
-    assert  DATABASE_URL.split("/")[-1].startsWith("test"),"please check the database URL"
+    assert  DATABASE_URL.split("/")[-1].startsWith("test"),"You are running in test mode but  the database URL does not start with test"
+    assert BATCH.startsWith("test"),"Test data should start with test"
 } else{
-    assert ! BATCH.startsWith("test"),"Check the batch data"
+    assert  ! DATABASE_URL.split("/")[-1].startsWith("test"),"Production database URL should not start with test"
+    assert ! BATCH.startsWith("test"),"You are using test data in the production"
 }   
 
 workflow GENERATE_TODO_LIST {
