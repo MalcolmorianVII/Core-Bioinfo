@@ -23,7 +23,6 @@
 
 **Note:** The artic_covid_medaka.py has code to get the barcodes from the seqtracker rather than entering them manually. This script should be used when running the artic pipeline.The seqtracker should be in a csv format and have an env variable refering to it in the nextflow.config file.
 
-The test data & DATABASE_URL need to be checked against to prevent saving it to the database
 
 ## Running the pipeline
 
@@ -36,3 +35,7 @@ The test data & DATABASE_URL need to be checked against to prevent saving it to 
 * Combine the sequencing data with the sample information 
 `nextflow run main_pipeline.nf -entry ADD_SEQ_DATA`
 
+
+NB:To run the pipeline using **test data** specify the run mode as test.Make sure the test data starts with test keyword and the DATABASE_URL points to the test database.
+
+`nextflow run main_pipeline.nf -entry PROCESS_SEQ_DATA --mode test`
