@@ -1,13 +1,13 @@
-// nextflow.enable.dsl=2
+nextflow.enable.dsl=2
 
-// workflow {
+workflow {
 
-//     mv_dir(params.minknw)
-//     basecalling(mv_dir.out)
-//     barcoding(basecalling.out)
-//     artic(barcoding.out) | view
-//     pangolin(artic.out) | view
-// }
+    mv_dir(params.minknw)
+    basecalling(mv_dir.out)
+    barcoding(basecalling.out)
+    artic(barcoding.out) | view
+    pangolin(artic.out) | view
+}
 
 
 process mv_dir {
@@ -17,7 +17,7 @@ process mv_dir {
     path minknw
 
     output:
-    stdout emit:mv
+    path(mv)
 
     script:
     """
@@ -28,34 +28,32 @@ process mv_dir {
 }
 
 process basecalling {
-    tag "Performing Basecalling with Guppy"
     label "guppy"
 
     input:
-    val mv
+    path(mv)
     
     output:
     stdout 
 
     script:
     """
-    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i /tmp/fast5 -s /tmp/fastq
+    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i ${mv}/fast5 -s ${mv}/fastq
     """
 }
 
 process barcoding {
-    tag "Barcode the samples"
     label "guppy"
 
     input:
-    val basecalling
+    path(basecalling)
 
     output:
-    stdout
+    path(barcoding)
 
     script:
     """
-    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i /tmp/fastq -s /tmp/fastq_pass
+    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i ${basecalling}/fastq -s ${basecalling}/fastq_pass
     """
 }
 
@@ -64,11 +62,10 @@ process artic {
     tag "Consensus sequence"
 
     input:
-    val artic_py
-    val barcoding 
+    path barcoding 
 
     output:
-    stdout 
+    path artic 
 
     script:
     """
@@ -81,10 +78,10 @@ process pangolin {
     tag "Assign lineages"
     
     input:
-    val artic
+    path artic
 
     output:
-    stdout
+    path pangolin
 
     script:
     """
