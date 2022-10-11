@@ -1,93 +1,101 @@
-// nextflow.enable.dsl=2
+nextflow.enable.dsl=2
 
-// workflow {
+workflow {
+    run_ch = Channel.fromPath(params.run,type: 'dir')
+    // min_ch = Channel.fromPath(params.minknow,type: 'dir')
+    // mv_dir(min_ch,run_ch)
+    // current_run = file(params.minknow)
+    // min_runs  = file(params.run)
+    // current_run.moveTo(min_runs)
 
-//     mv_dir(params.minknw)
-//     basecalling(mv_dir.out)
-//     barcoding(basecalling.out)
-//     artic(barcoding.out) | view
-//     pangolin(artic.out) | view
-// }
-
-
-process mv_dir {
-    tag "Move SARS-CoV2 run from Minknow directory"
-    
-    input:
-    path minknw
-
-    output:
-    stdout emit:mv
-
-    script:
-    """
-    mv ${minknw} ${WORKDIR}
-    chown -R bkutambe:bkutambe ${WORKDIR}
-    """
-
+    basecalling(run_ch)
+    barcoding(basecalling.out,run_ch)
+    artic(barcoding.out.barcodes,run_ch,params.artic_covid_medaka_py)
+    pangolin(artic.out)
 }
 
+
+// process mv_dir {
+//     tag "Move SARS-CoV2 run from Minknow directory"
+//     publishDir "params.run/${BATCH}/fast5", mode: 'move'
+//     input:
+//     path minknw
+//     path run_ch
+
+//     output:
+//     path "${publishDir}"
+
+//     script:
+//     """
+//     mv ${minknw} ${run_ch}
+//     """
+
+// }
+
 process basecalling {
-    tag "Performing Basecalling with Guppy"
     label "guppy"
+    debug true
 
     input:
-    val mv
+    path run_ch
     
     output:
-    stdout 
+    path "${run_ch}/fastq"
 
     script:
     """
-    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i /tmp/fast5 -s /tmp/fastq
+    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i ${run_ch}/fast5 -s ${run_ch}/fastq
     """
 }
 
 process barcoding {
-    tag "Barcode the samples"
     label "guppy"
+    debug true
 
     input:
-    val basecalling
+    path fastq
+    path run_ch
 
     output:
-    stdout
+    val true,emit:barcodes
+    path "${run_ch}/fastq_pass"
 
     script:
     """
-    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i /tmp/fastq -s /tmp/fastq_pass
+    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i ${fastq} -s ${run_ch}/fastq_pass
     """
 }
 
 
 process artic {
-    tag "Consensus sequence"
+    debug true
 
     input:
-    val artic_py
-    val barcoding 
+    val ready
+    path run_ch 
+    path artic_py
 
     output:
-    stdout 
+    path "${run_ch}/work",emit: work
 
     script:
     """
-    mkdir -p ${WORKDIR}/${BATCH}/work && cd ${WORKDIR}/${BATCH}/work
+    mkdir -p ${run_ch}/work && cd ${run_ch}/work
     python ${artic_py}
     """
 }
 
 process pangolin {
-    tag "Assign lineages"
-    
+    debug true
+
     input:
-    val artic
+    path work
 
     output:
-    stdout
+    path "${work}/${BATCH}.consensus.fasta",emit:consensus
 
     script:
     """
-    pangolin --outfile ${WORKDIR}/${BATCH}/work/${BATCH}.pangolin.lineage_report.csv ${WORKDIR}/${BATCH}/work/${BATCH}.consensus.fasta
+    pangolin --outfile ${work}/${BATCH}.pangolin.lineage_report.csv ${consensus}
     """
 }
