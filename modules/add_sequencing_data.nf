@@ -1,8 +1,7 @@
 nextflow.enable.dsl=2
 include  { mk_today} from './todo_list'
 workflow {
-    date = new Date().format('yyyy.MM.dd')
-    mk_today(date)
+    mk_today()
     make_seq_seqbox_input(params.make_seqbox_input_py) | view
     add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out) | view
     add_readset_batches(params.seqbox_cmd_py,add_raw_sequencing_batches.out) | view
@@ -22,8 +21,7 @@ process make_seq_seqbox_input {
 
     input:
     file inseq
-    path date 
-    
+
     output:
     path seq_data 
 

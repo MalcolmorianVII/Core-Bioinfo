@@ -2,6 +2,7 @@ nextflow.enable.dsl=2
 
 workflow {
     run_ch = Channel.fromPath(params.run,type: 'dir')
+    artic_ch = Channel.fromPath(params.artic_covid_medaka_py)
     // min_ch = Channel.fromPath(params.minknow,type: 'dir')
     // mv_dir(min_ch,run_ch)
     // current_run = file(params.minknow)
@@ -10,7 +11,7 @@ workflow {
 
     basecalling(run_ch)
     barcoding(basecalling.out,run_ch)
-    artic(barcoding.out.barcodes,run_ch,params.artic_covid_medaka_py)
+    artic(barcoding.out.barcodes,run_ch,artic_ch)
     pangolin(artic.out)
 }
 
@@ -73,7 +74,7 @@ process artic {
     input:
     val ready
     path run_ch 
-    path artic_py
+    path artic_ch
 
     output:
     path "${run_ch}/work",emit: work
