@@ -1,29 +1,35 @@
 nextflow.enable.dsl=2
 include  { mk_today} from './todo_list'
 workflow {
+    make_ch = Channel.fromPath(params.make_seqbox_input_py)
     mk_today()
-    make_seq_seqbox_input(params.make_seqbox_input_py) | view
-    add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out) | view
-    add_readset_batches(params.seqbox_cmd_py,add_raw_sequencing_batches.out) | view
-    add_extractions(params.seqbox_cmd_py,add_readset_batches.out) | view
-    add_covid_confirmatory_pcrs(params.seqbox_cmd_py,add_extractions.out) | view
-    add_tiling_pcrs(params.seqbox_cmd_py,add_covid_confirmatory_pcrs.out)| view
-    add_readsets(params.seqbox_cmd_py,add_tiling_pcrs.out) | view
-    add_readset_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readsets.out) | view
-    add_artic_consensus_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readset_to_filestructure.out) | view
-    add_artic_covid_results(params.seqbox_cmd_py,add_artic_consensus_to_filestructure.out) | view
-    add_pangolin_results(params.seqbox_cmd_py,add_artic_covid_results.out) | view
-    get_sequence_run_info(add_pangolin_results.out) | view
+    make_seq_seqbox_input(mk_today.out,make_ch)
+    add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_batch) | view
+    add_readset_batches(add_raw_sequencing_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.read_batch) | view
+    add_extractions(add_readset_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
+    // add_covid_confirmatory_pcrs(params.seqbox_cmd_py,add_extractions.out) | view
+    // add_tiling_pcrs(params.seqbox_cmd_py,add_covid_confirmatory_pcrs.out)| view
+    // add_readsets(params.seqbox_cmd_py,add_tiling_pcrs.out) | view
+    // add_readset_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readsets.out) | view
+    // add_artic_consensus_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readset_to_filestructure.out) | view
+    // add_artic_covid_results(params.seqbox_cmd_py,add_artic_consensus_to_filestructure.out) | view
+    // add_pangolin_results(params.seqbox_cmd_py,add_artic_covid_results.out) | view
+    // get_sequence_run_info(add_pangolin_results.out) | view
 }
 
 
 process make_seq_seqbox_input {
+    debug true
+    publishDir "${SEQ_OUTPUT_DIR}",mode:"copy"
 
     input:
+    val ready
     file inseq
 
     output:
-    path seq_data 
+    path "raw_sequencing_batches.csv",emit:seq_batch
+    path "readset_batches.csv",emit:read_batch
+    path "sequencing.csv",emit:seq_csv
 
     script:
     """
@@ -36,14 +42,14 @@ process add_raw_sequencing_batches {
 
     input:
     path seqbox_cmd_py
-    file make_seq_seqbox_input
+    file seq_batch
 
     output:
-    stdout 
+    val true 
 
     script:
     """
-    python ${seqbox_cmd_py} add_raw_sequencing_batches -i ${SEQ_SEQBOX_INPUT_OUTDIR}/raw_sequencing_batches.csv
+    python ${seqbox_cmd_py} add_raw_sequencing_batches -i ${seq_batch}
     """
 }
 
@@ -51,15 +57,16 @@ process add_readset_batches {
     label "seqbox"
 
     input:
+    val ready
     path seqbox_cmd_py
-    file add_raw_sequencing_batches
+    file read_batch
 
     output:
-    stdout 
+    val true
 
     script:
     """
-    python ${seqbox_cmd_py} add_readset_batches -i ${SEQ_SEQBOX_INPUT_OUTDIR}/readset_batches.csv
+    python ${seqbox_cmd_py} add_readset_batches -i ${read_batch}
     """
 }
 
@@ -67,15 +74,16 @@ process add_extractions {
     label "seqbox"
 
     input:
+    val ready
     path seqbox_cmd_py
-    file add_readset_batches
+    file seq_csv
 
     output:
     stdout 
 
     script:
     """
-    python ${seqbox_cmd_py} add_extractions -i ${SEQ_SEQBOX_INPUT_OUTDIR}/sequencing.csv
+    python ${seqbox_cmd_py} add_extractions -i ${seq_csv}
     """
 }
 

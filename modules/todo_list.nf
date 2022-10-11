@@ -14,7 +14,7 @@ process mk_today {
     tag "Make directory with todays date as name"
 
     output:
-    stdout
+    val true
 
     script:
     """
@@ -89,7 +89,8 @@ process pcr_results {
 }
 
 process query_db {
-
+    publishDir "${SEQ_OUTPUT_DIR}",mode:"copy"
+    
     input:
     val pcr_results
 
@@ -98,6 +99,6 @@ process query_db {
 
     script:
     """
-    python ${projectDir}/query_db.py get_todolist -i ${SEQ_OUTPUT_DIR}/${today}.seqbox_todolist.xlsx
+    python ${projectDir}/query_db.py get_todolist -i ${today}.seqbox_todolist.xlsx
     """
 }

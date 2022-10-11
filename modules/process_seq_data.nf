@@ -2,17 +2,17 @@ nextflow.enable.dsl=2
 
 workflow {
     run_ch = Channel.fromPath(params.run,type: 'dir')
-    artic_ch = Channel.fromPath(params.artic_covid_medaka_py)
+    // artic_ch = Channel.fromPath(params.artic_covid_medaka_py)
     // min_ch = Channel.fromPath(params.minknow,type: 'dir')
     // mv_dir(min_ch,run_ch)
     // current_run = file(params.minknow)
     // min_runs  = file(params.run)
     // current_run.moveTo(min_runs)
 
-    basecalling(run_ch)
-    barcoding(basecalling.out,run_ch)
-    artic(barcoding.out.barcodes,run_ch,artic_ch)
-    pangolin(artic.out)
+    // basecalling(run_ch)
+    // barcoding(basecalling.out,run_ch)
+    // artic(run_ch)
+    pangolin()
 }
 
 
@@ -72,9 +72,9 @@ process artic {
     debug true
 
     input:
-    val ready
+    // val ready
     path run_ch 
-    path artic_ch
+    // file artic_py
 
     output:
     path "${run_ch}/work",emit: work
@@ -82,21 +82,21 @@ process artic {
     script:
     """
     mkdir -p ${run_ch}/work && cd ${run_ch}/work
-    python ${artic_py}
+    python ${artic_covid_medaka_py}
     """
 }
 
 process pangolin {
     debug true
-
-    input:
-    path work
+    publishDir "${work}",mode:"copy"
+    // input:
+    // path work
 
     output:
-    path "${work}/${BATCH}.consensus.fasta",emit:consensus
+    path "${BATCH}.pangolin.lineage_report.csv"
 
     script:
     """
-    pangolin --outfile ${work}/${BATCH}.pangolin.lineage_report.csv ${consensus}
+    pangolin --outfile ${BATCH}.pangolin.lineage_report.csv ${work}/${BATCH}.consensus.fasta
     """
 }
