@@ -1,15 +1,6 @@
 nextflow.enable.dsl=2
 
 workflow {
-<<<<<<< HEAD
-
-    mv_dir(params.minknw)
-    basecalling(mv_dir.out)
-    barcoding(basecalling.out)
-    artic(barcoding.out) | view
-    pangolin(artic.out) | view
-}
-=======
     run_ch = Channel.fromPath(params.run,type: 'dir')
     // artic_ch = Channel.fromPath(params.artic_covid_medaka_py)
     // min_ch = Channel.fromPath(params.minknow,type: 'dir')
@@ -24,7 +15,6 @@ workflow {
     pangolin()
 }
 
->>>>>>> 158c892500271f5f6716651cae4acead5b0dde0c
 
 // process mv_dir {
 //     tag "Move SARS-CoV2 run from Minknow directory"
@@ -33,19 +23,8 @@ workflow {
 //     path minknw
 //     path run_ch
 
-<<<<<<< HEAD
-process mv_dir {
-    tag "Move SARS-CoV2 run from Minknow directory"
-    
-    input:
-    path minknw
-
-    output:
-    path(mv)
-=======
 //     output:
 //     path "${publishDir}"
->>>>>>> 158c892500271f5f6716651cae4acead5b0dde0c
 
 //     script:
 //     """
@@ -59,22 +38,14 @@ process basecalling {
     debug true
 
     input:
-<<<<<<< HEAD
-    path(mv)
-=======
     path run_ch
->>>>>>> 158c892500271f5f6716651cae4acead5b0dde0c
     
     output:
     path "${run_ch}/fastq"
 
     script:
     """
-<<<<<<< HEAD
-    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i ${mv}/fast5 -s ${mv}/fastq
-=======
     guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i ${run_ch}/fast5 -s ${run_ch}/fastq
->>>>>>> 158c892500271f5f6716651cae4acead5b0dde0c
     """
 }
 
@@ -83,16 +54,6 @@ process barcoding {
     debug true
 
     input:
-<<<<<<< HEAD
-    path(basecalling)
-
-    output:
-    path(barcoding)
-
-    script:
-    """
-    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i ${basecalling}/fastq -s ${basecalling}/fastq_pass
-=======
     path fastq
     path run_ch
 
@@ -103,7 +64,6 @@ process barcoding {
     script:
     """
     guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i ${fastq} -s ${run_ch}/fastq_pass
->>>>>>> 158c892500271f5f6716651cae4acead5b0dde0c
     """
 }
 
@@ -112,19 +72,12 @@ process artic {
     debug true
 
     input:
-<<<<<<< HEAD
-    path barcoding 
-
-    output:
-    path artic 
-=======
     // val ready
     path run_ch 
     // file artic_py
 
     output:
     path "${run_ch}/work",emit: work
->>>>>>> 158c892500271f5f6716651cae4acead5b0dde0c
 
     script:
     """
@@ -134,15 +87,6 @@ process artic {
 }
 
 process pangolin {
-<<<<<<< HEAD
-    tag "Assign lineages"
-    
-    input:
-    path artic
-
-    output:
-    path pangolin
-=======
     debug true
     publishDir "${work}",mode:"copy"
     // input:
@@ -150,7 +94,6 @@ process pangolin {
 
     output:
     path "${BATCH}.pangolin.lineage_report.csv"
->>>>>>> 158c892500271f5f6716651cae4acead5b0dde0c
 
     script:
     """
