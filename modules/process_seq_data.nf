@@ -16,22 +16,21 @@ workflow {
 }
 
 
-// process mv_dir {
-//     tag "Move SARS-CoV2 run from Minknow directory"
-//     publishDir "params.run/${BATCH}/fast5", mode: 'move'
-//     input:
-//     path minknw
-//     path run_ch
+process mv_dir {
+    tag "Move SARS-CoV2 run from Minknow directory"
+    input:
+    path run_ch
 
-//     output:
-//     path "${publishDir}"
+    output:
+    stdout
 
-//     script:
-//     """
-//     mv ${minknw} ${run_ch}
-//     """
+    script:
+    """
+    mv ${params.minknow} ${run_ch}
+    chown -R ${params.owner} ${run_ch}
+    """
 
-// }
+}
 
 process basecalling {
     label "guppy"
