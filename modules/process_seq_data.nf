@@ -3,31 +3,24 @@ nextflow.enable.dsl=2
 workflow {
     run_ch = Channel.fromPath(params.run,type: 'dir')
     // artic_ch = Channel.fromPath(params.artic_covid_medaka_py)
-    // min_ch = Channel.fromPath(params.minknow,type: 'dir')
-    // mv_dir(min_ch,run_ch)
-    // current_run = file(params.minknow)
-    // min_runs  = file(params.run)
-    // current_run.moveTo(min_runs)
-
-    // basecalling(run_ch)
+    // mv_dir()
+    // basecalling(mv_dir.out,run_ch)
     // barcoding(basecalling.out,run_ch)
-    // artic(run_ch)
-    pangolin()
+    artic()
+    pangolin(artic.out)
 }
 
 
 process mv_dir {
     tag "Move SARS-CoV2 run from Minknow directory"
-    input:
-    path run_ch
 
     output:
-    stdout
+    val true
 
     script:
     """
-    mv ${params.minknow} ${run_ch}
-    chown -R ${params.owner} ${run_ch}
+    sudo mv ${params.minknow} ${params.run}
+    sudo chown -R ${params.owner} ${params.run}
     """
 
 }
@@ -37,6 +30,7 @@ process basecalling {
     debug true
 
     input:
+    val ready
     path run_ch
     
     output:
@@ -69,33 +63,34 @@ process barcoding {
 
 process artic {
     debug true
-
-    input:
+    publishDir "${params.work}",mode:"copy"
+    // input:
     // val ready
-    path run_ch 
+    // path run_ch 
     // file artic_py
 
     output:
-    path "${run_ch}/work",emit: work
+    path "${BATCH}.consensus.fasta",emit: consensus
 
     script:
     """
-    mkdir -p ${run_ch}/work && cd ${run_ch}/work
+    mkdir -p work && cd work
     python ${artic_covid_medaka_py}
     """
 }
 
 process pangolin {
     debug true
-    publishDir "${work}",mode:"copy"
-    // input:
-    // path work
+    publishDir "${params.work}",mode:"move"
+
+    input:
+    path consensus
 
     output:
     path "${BATCH}.pangolin.lineage_report.csv"
 
     script:
     """
-    pangolin --outfile ${BATCH}.pangolin.lineage_report.csv ${work}/${BATCH}.consensus.fasta
+    pangolin --outfile ${BATCH}.pangolin.lineage_report.csv ${consensus}
     """
 }
