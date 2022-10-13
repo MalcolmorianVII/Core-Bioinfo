@@ -2,11 +2,11 @@ nextflow.enable.dsl=2
 
 workflow {
     run_ch = Channel.fromPath(params.run,type: 'dir')
-    // artic_ch = Channel.fromPath(params.artic_covid_medaka_py)
     // mv_dir()
     // basecalling(mv_dir.out,run_ch)
     // barcoding(basecalling.out,run_ch)
-    artic()
+    // artic(barcoding.out.barcodes)
+    artic(params.work)
     pangolin(artic.out)
 }
 
@@ -64,17 +64,17 @@ process barcoding {
 process artic {
     debug true
     publishDir "${params.work}",mode:"copy"
-    // input:
+    input:
     // val ready
-    // path run_ch 
-    // file artic_py
+    path work_ch 
 
     output:
     path "${BATCH}.consensus.fasta",emit: consensus
+    
 
     script:
     """
-    mkdir -p work && cd work
+    mkdir -p ${work_ch} && cd ${work_ch}
     python ${artic_covid_medaka_py}
     """
 }
