@@ -81,7 +81,7 @@ process artic {
 
 process pangolin {
     debug true
-    publishDir "${params.work}",mode:"move"
+    publishDir "${params.run}/work",mode:"move"
 
     input:
     path consensus
