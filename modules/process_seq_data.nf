@@ -6,8 +6,8 @@ workflow {
     // basecalling(run_ch)
     // barcoding(basecalling.out,run_ch)
     // artic(barcoding.our.barcodes,run_ch)
-    artic(run_ch)
-    pangolin(artic.out)
+    // artic(run_ch)
+    pangolin()
 }
 
 
@@ -83,14 +83,14 @@ process pangolin {
     debug true
     publishDir "${params.run}/work",mode:"move"
 
-    input:
-    path consensus
+    // input:
+    // path consensus
 
     output:
     path "${BATCH}.pangolin.lineage_report.csv"
 
     script:
     """
-    pangolin --outfile ${BATCH}.pangolin.lineage_report.csv ${consensus}
+    pangolin --outfile ${BATCH}.pangolin.lineage_report.csv ${params.run}/work/${BATCH}.consensus.fasta
     """
 }

@@ -11,8 +11,8 @@ workflow {
     add_covid_confirmatory_pcrs(add_extractions.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
     add_tiling_pcrs(add_covid_confirmatory_pcrs.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv)| view
     add_readsets(add_tiling_pcrs.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
-    add_readset_to_filestructure(add_readsets.out.params.file_inhandling_py,make_seq_seqbox_input.out.seq_csv) | view
-    add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,run_ch,params.file_inhandling_py) | view
+    add_readset_to_filestructure(add_readsets.out,params.file_inhandling_py,make_seq_seqbox_input.out.seq_csv) | view
+    add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,params.file_inhandling_py) | view
     add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_ch,params.seqbox_cmd_py) | view
     add_pangolin_results(add_artic_covid_results.out,run_ch,params.seqbox_cmd_py) | view
     get_sequence_run_info(add_pangolin_results.out) | view
@@ -24,7 +24,7 @@ process make_seq_seqbox_input {
 
     input:
     val ready
-    path "${SEQ_OUTPUT_DIR}"
+    path SEQ_OUTPUT_DIR
     file inseq
 
     output:
@@ -161,7 +161,6 @@ process add_artic_consensus_to_filestructure {
     
     input:
     val ready
-    path run_ch
     path file_inhandling_py
 
     output:
@@ -169,7 +168,7 @@ process add_artic_consensus_to_filestructure {
 
     script:
     """
-    python ${file_inhandling_py} add_artic_consensus_to_filestructure -b ${BATCH} -c ${gpu2_seqbox_config} -d ${run_ch}/work
+    python ${file_inhandling_py} add_artic_consensus_to_filestructure -b ${BATCH} -c ${gpu2_seqbox_config} -d ${params.run}/work
     """
 }
 
@@ -217,6 +216,6 @@ process get_sequence_run_info {
 
     script:
     """
-    python ${projectDir}/query_db.py get_seq_run_info -i ${SEQ_SEQBOX_INPUT_OUTDIR}/${BATCH}.seqbox_export.xlsx
+    python ${projectDir}/query_db.py get_seq_run_info -i ${SEQ_OUTPUT_DIR}/${BATCH}.seqbox_export.xlsx
     """
 }
