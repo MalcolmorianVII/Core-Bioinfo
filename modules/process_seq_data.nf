@@ -7,8 +7,8 @@ workflow {
     // barcoding(basecalling.out,run_ch)
     // artic(barcoding.our.barcodes,run_ch)
     // artic(barcoding.out.barcodes)
-    artic(params.work)
-    pangolin(artic.out)
+    // artic(params.work)
+    // pangolin(artic.out)
 }
 
 
