@@ -73,6 +73,7 @@ process samples {
 }
 
 process pcr_results {
+    debug true
     label "seqbox"
 
     input:
@@ -90,13 +91,15 @@ process pcr_results {
 }
 
 process query_db {
-    publishDir "${SEQ_OUTPUT_DIR}",mode:"copy"
+    debug true
+
+    publishDir "${SEQ_OUTPUT_DIR}",mode:"move"
     
     input:
     val pcr_results
 
     output:
-    stdout
+    path "${today}.seqbox_todolist.xlsx"
 
     script:
     """

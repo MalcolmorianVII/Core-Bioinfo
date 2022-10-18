@@ -2,9 +2,10 @@ nextflow.enable.dsl=2
 
 workflow {
     run_ch = Channel.fromPath(params.run,type: 'dir')
-    // mv_dir()
-    // basecalling(mv_dir.out,run_ch)
+    // mv_dir(min_ch,run_ch)
+    // basecalling(run_ch)
     // barcoding(basecalling.out,run_ch)
+    // artic(barcoding.our.barcodes,run_ch)
     // artic(barcoding.out.barcodes)
     artic(params.work)
     pangolin(artic.out)
@@ -66,11 +67,10 @@ process artic {
     publishDir "${params.work}",mode:"copy"
     input:
     // val ready
-    path work_ch 
+    path run_ch
 
     output:
-    path "${BATCH}.consensus.fasta",emit: consensus
-    
+    path "${run_ch}/work/${BATCH}.consensus.fasta",emit: consensus
 
     script:
     """
@@ -81,16 +81,16 @@ process artic {
 
 process pangolin {
     debug true
-    publishDir "${params.work}",mode:"move"
+    publishDir "${params.run}/work",mode:"move"
 
-    input:
-    path consensus
+    // input:
+    // path consensus
 
     output:
     path "${BATCH}.pangolin.lineage_report.csv"
 
     script:
     """
-    pangolin --outfile ${BATCH}.pangolin.lineage_report.csv ${consensus}
+    pangolin --outfile ${BATCH}.pangolin.lineage_report.csv ${params.run}/work/${BATCH}.consensus.fasta
     """
 }
