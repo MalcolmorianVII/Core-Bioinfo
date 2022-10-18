@@ -14,19 +14,12 @@ def move_recent_batch(destiny):
     shutil.move(f"{latest_run}/no_sample/{batch}",destiny)
     return batch
 
-def get_recent_batch():
-    minion_runs = f"{os.environ['HOME']}/data/minion_runs/*"
-    dirs = glob.glob(minion_runs)
-    latest_run = max(dirs,key=os.path.getctime)
-    batch = latest_run.split('/')[-1]
-    
-# Get batch recent run of covid seq
-# batch = move_recent_batch()
-# os.environ['BATCH'] = batch
-# print(batch)
-# minknow_dir = "/var/lib/minknow/data/SARS*"
-# files = glob.glob(minknow_dir)
-# latest_run = max(files,key=os.path.getctime)
-# print(os.listdir(f"{latest_run}/no_sample"))
 
-get_recent_batch()
+def write_to_configs():
+    batch = move_recent_batch()
+    with open("nextflow.config",'r+') as config_file:
+        configs = config_file.read()
+        configs = configs.replace("current_batch",batch)
+        config_file.write(configs)
+    
+write_to_configs()
