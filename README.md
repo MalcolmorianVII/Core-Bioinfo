@@ -23,7 +23,7 @@
 
     c. In the process scope `seqbox`, `artic` and `pangolin` processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
 
-**Note:** The artic_covid_medaka.py has code to get the barcodes from the seqtracker rather than entering them manually. This script should be used when running the artic pipeline.The seqtracker should be in a csv format and have an env variable refering to it in the nextflow.config file.
+**Note:** The artic_covid_medaka.py has code to get the barcodes from the seqtracker rather than entering them manually. This script should be used when running the artic pipeline.The seqtracker should be in a csv format and have an env variable refering to it in the nextflow.config file.Modify the variables `root_dir` and `primer_scheme_directory` to point to the correct paths on the local system e.g. `root_dir = 'path/to/minion_runs'` and `primer_scheme_directory = 'path/to/primer-schemes'`
 
 
 ## Running the pipeline
