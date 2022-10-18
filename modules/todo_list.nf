@@ -3,7 +3,7 @@ nextflow.enable.dsl=2
 workflow {
     ch_api = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
     mk_today() | view
-    query_api(ch_api) | view 
+    query_api(mk_today.out,ch_api) | view 
     sample_sources(query_api.out,params.seqbox_cmd_py) | view
     samples(query_api.out,params.seqbox_cmd_py,sample_sources.out) | view
     pcr_results(query_api.out,params.seqbox_cmd_py,samples.out) | view
@@ -24,9 +24,10 @@ process mk_today {
 }
 
 process query_api {
-    publishDir "${SEQ_OUTPUT_DIR}", mode: 'copy'
+    publishDir "${SEQ_OUTPUT_DIR}", mode: "move"
 
     input:
+    val ready
     path api
 
     output:
