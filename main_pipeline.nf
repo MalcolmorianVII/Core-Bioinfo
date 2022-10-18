@@ -25,35 +25,38 @@ if (params.mode == "test") {
 
 workflow GENERATE_TODO_LIST {
     ch_api = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
-    date = new Date().format('yyyy.MM.dd')
-    mk_today(date,params.infiles) | view
-    query_api(date,ch_api,params.infiles) | view 
+    mk_today() | view
+    query_api(mk_today.out,ch_api) | view 
     sample_sources(query_api.out,params.seqbox_cmd_py) | view
     samples(query_api.out,params.seqbox_cmd_py,sample_sources.out) | view
     pcr_results(query_api.out,params.seqbox_cmd_py,samples.out) | view
-    query_db(pcr_results.out,date,params.infiles) | view
+    query_db(pcr_results.out) | view
 }
 
+run_ch = Channel.fromPath(params.run,type: 'dir')
+
 workflow PROCESS_SEQ_DATA {
-    mv_dir(params.minknow)
-    basecalling(mv_dir.out)
-    barcoding(basecalling.out)
-    artic(params.artic_covid_medaka_py,barcoding.out) | view
-    pangolin(artic.out) | view
+    mv_dir()
+    basecalling(run_ch)
+    barcoding(basecalling.out,run_ch)
+    artic(barcoding.our.barcodes,run_ch)
+    pangolin(artic.out)
 }
 
 workflow ADD_SEQ_DATA {
-    make_seq_seqbox_input(params.make_seqbox_input_py) | view
-    add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out) | view
-    add_readset_batches(params.seqbox_cmd_py,add_raw_sequencing_batches.out) | view
-    add_extractions(params.seqbox_cmd_py,add_readset_batches.out) | view
-    add_covid_confirmatory_pcrs(params.seqbox_cmd_py,add_extractions.out) | view
-    add_tiling_pcrs(params.seqbox_cmd_py,add_covid_confirmatory_pcrs.out)| view
-    add_readsets(params.seqbox_cmd_py,add_tiling_pcrs.out) | view
-    add_readset_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readsets.out) | view
-    add_artic_consensus_to_filestructure(params.file_inhandling_py,params.gpu2_seqbox_config,add_readset_to_filestructure.out) | view
-    add_artic_covid_results(params.seqbox_cmd_py,add_artic_consensus_to_filestructure.out) | view
-    add_pangolin_results(params.seqbox_cmd_py,add_artic_covid_results.out) | view
+    make_ch = Channel.fromPath(params.make_seqbox_input_py)
+    mk_today()
+    make_seq_seqbox_input(mk_today.out,SEQ_OUTPUT_DIR,make_ch)
+    add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_batch) | view
+    add_readset_batches(add_raw_sequencing_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.read_batch) | view
+    add_extractions(add_readset_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
+    add_covid_confirmatory_pcrs(add_extractions.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
+    add_tiling_pcrs(add_covid_confirmatory_pcrs.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv)| view
+    add_readsets(add_tiling_pcrs.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
+    add_readset_to_filestructure(add_readsets.out,params.file_inhandling_py,make_seq_seqbox_input.out.seq_csv) | view
+    add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,params.file_inhandling_py) | view
+    add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_ch,params.seqbox_cmd_py) | view
+    add_pangolin_results(add_artic_covid_results.out,run_ch,params.seqbox_cmd_py) | view
     get_sequence_run_info(add_pangolin_results.out) | view
 }
 
