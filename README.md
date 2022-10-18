@@ -9,15 +9,17 @@
 
 3. Make a copy of `nextflow.config` file, and make the following changes to the new version:
 
-    a. In the `params` scope change the values of `minknow` to reflect the latest run directory & `gpu2_seqbox_config` to the right name of the seqbox `config.yaml` file e.g. [this](https://github.com/flashton2003/seqbox_configs/blob/main/mlw_gpu1_seqbox_config.yaml) link.
+    a. In the `params` scope change the values of `minknow` to reflect the latest run directory & change batch in the `run` variable.The `owner` variable should have the correct file ownerships
 
     b. In the `env` scope ensure:
 
         * BATCH points to the current sequencing batch e.g 20210701_1420_MN33881_FAO36609_5c3b1ea9.
 
-        * SEQTRACKER points to the seqtracker file (in a csv format). For now it set to be in the WORKDIR/BATCH director
+        * SEQTRACKER points to the seqtracker file (in a csv format). For now it set to be in the current batch directory
 
-        * SEQ_SEQBOX_INPUT_OUTDIR points the iso-dated directory that has been made in the infiles directory which will contain the following files; raw_sequencing_batches.csv,readset_batches.csv and sequencing.csv e.g /home/bkutambe/data/seqbox/infiles/2022.09.22
+        * SEQ_OUTPUT_DIR points the iso-dated directory that has been made in the infiles directory which will contain the following files; raw_sequencing_batches.csv,readset_batches.csv and sequencing.csv e.g /home/bkutambe/data/seqbox/infiles/2022.09.22
+
+        * gpu2_seqbox_config should point to the right name of the seqbox config.yaml file e.g. [this](https://github.com/flashton2003/seqbox_configs/blob/main/mlw_gpu1_seqbox_config.yaml) link.
 
     c. In the process scope `seqbox`, `artic` and `pangolin` processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
 
