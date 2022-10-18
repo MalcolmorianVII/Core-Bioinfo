@@ -23,7 +23,6 @@ process mv_dir {
     sudo mv ${params.minknow} ${params.run}
     sudo chown -R ${params.owner} ${params.run}
     """
-
 }
 
 process basecalling {
