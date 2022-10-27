@@ -21,7 +21,7 @@
 
         * gpu2_seqbox_config should point to the right seqbox config.yaml file e.g. [this](https://github.com/flashton2003/seqbox_configs/blob/main/mlw_gpu1_seqbox_config.yaml) link.
 
-    c. In the process scope `seqbox`, `artic` and `pangolin` processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
+    c. In the process scope `seqbox`, `artic` and `pangolin` processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by `conda env list` e.g /home/bkutambe/miniconda3/envs/artic_new10
 
 
 4. Modify the following variables in the artic_covid_medaka.py in the covid_scripts directory as follows:
@@ -30,23 +30,26 @@
 
     b. `primer_scheme_directory=/path/to/primer_scheme_directory`
 
-6. Change the  `/home/bkutambe/test_data/minion_runs` in make_sequencing_seqbox_input.py to reflect the local test_data path as created in step 4.a 
+
+## Setting up the test_database
+
+1. Install postgres
+2. Make a conda env according to `seqbox_conda_env.yaml` in the git repo
+3. Fork the code from [this] (https://github.com/flashton2003/seqbox)
+4. Modify your python path `export PYTHONPATH="${PYTHONPATH}:/Users/flashton/Dropbox/scripts/seqbox/src"`
+5. Set the DATABASE_URL env variable to be the url of the database, e.g. `export DATABASE_URL=postgresql:///test_seqbox`
+6. Run `test/test_no_web.py`
+7. Run test/run_test_0*.sh
 
 
-
-
-## Running the pipeline
+## Running the pipeline in test mode
 
 * Getting the todolist
-`nextflow run main_pipeline.nf -entry GENERATE_TODO_LIST`
+`nextflow run main_pipeline.nf -entry GENERATE_TODO_LIST -c test_nextflow.config --mode test` 
 
 * Processing the sequencing data
-`nextflow run main_pipeline.nf -entry PROCESS_SEQ_DATA`
+`nextflow run main_pipeline.nf -entry PROCESS_SEQ_DATA -c test_nextflow.config --mode test`
 
 * Combine the sequencing data with the sample information 
-`nextflow run main_pipeline.nf -entry ADD_SEQ_DATA`
+`nextflow run main_pipeline.nf -entry ADD_SEQ_DATA -c test_nextflow.config --mode test`
 
-
-Note:To run the pipeline using **test data & database** specify the run mode as test .eg.
-
-`nextflow run main_pipeline.nf -entry PROCESS_SEQ_DATA --mode test`
