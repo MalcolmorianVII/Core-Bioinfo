@@ -15,15 +15,16 @@ def read_in_seqtracker(seqtracker_handle):
     # print(seqtracker)
     return seqtracker
 
+MINION_RUNS = f"{os.environ.get('HOME')}/test_data/minion_runs"
 
 def write_raw_seq_batch(batch_name, raw_seq_batch_outfile):
     sequencing_date = batch_name.split('_')[0]
     sequencing_date = f'{sequencing_date[6:8]}/{sequencing_date[4:6]}/{sequencing_date[0:4]}'
-    raw_seq_batch_outfile.write(f'/home/bkutambe/data/minion_runs/{batch_name},{batch_name},{sequencing_date},nanopore,minion_mk1b,mlw_minion_mk1b_a,sqk-lsk109,MLW,R9.4.1\n')
+    raw_seq_batch_outfile.write(f'{MINION_RUNS}/{batch_name},{batch_name},{sequencing_date},nanopore,minion_mk1b,mlw_minion_mk1b_a,sqk-lsk109,MLW,R9.4.1\n')
 
 
 def write_readset_batch(batch_name, readset_batch_outfile):
-    readset_batch_outfile.write(f'{batch_name},{batch_name},/home/bkutambe/data/minion_runs/{batch_name},guppy v5 sup\n')
+    readset_batch_outfile.write(f'{batch_name},{batch_name},{MINION_RUNS}/{batch_name},guppy v5 sup\n')
 
 
 def get_group_name(sample_id):
