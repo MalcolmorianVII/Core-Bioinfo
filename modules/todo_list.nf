@@ -35,7 +35,7 @@ process query_api {
 
     script:
     """
-    python ${api} > ${today}.sample_source_sample_pcrs.csv
+    python3 ${api} > ${today}.sample_source_sample_pcrs.csv
     """
 }
 
@@ -51,7 +51,7 @@ process sample_sources {
 
     script:
     """
-    python ${seq} add_sample_sources -i ${covid_cases}
+    python3 ${seq} add_sample_sources -i ${covid_cases}
     """
 }
 
@@ -68,12 +68,12 @@ process samples {
 
     script:
     """
-    python ${seq} add_samples -i ${covid_cases}
+    python3 ${seq} add_samples -i ${covid_cases}
     """
 }
 
 process pcr_results {
-    debug true
+    // debug true
     label "seqbox"
 
     input:
@@ -86,12 +86,12 @@ process pcr_results {
 
     script:
     """
-    python ${seq} add_pcr_results -i ${covid_cases}
+    python3 ${seq} add_pcr_results -i ${covid_cases}
     """
 }
 
 process query_db {
-    debug true
+    // debug true
 
     publishDir "${SEQ_OUTPUT_DIR}",mode:"move"
     
@@ -103,6 +103,6 @@ process query_db {
 
     script:
     """
-    python ${projectDir}/query_db.py get_todolist -i ${today}.seqbox_todolist.xlsx
+    python3 ${projectDir}/query_db.py get_todolist -i ${today}.seqbox_todolist.xlsx
     """
 }

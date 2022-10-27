@@ -25,7 +25,7 @@ process mv_dir {
 
 process basecalling {
     label "guppy"
-    debug true
+    // debug true
 
     input:
     val ready
@@ -42,7 +42,7 @@ process basecalling {
 
 process barcoding {
     label "guppy"
-    debug true
+    // debug true
 
     input:
     path fastq
@@ -60,7 +60,7 @@ process barcoding {
 
 
 process artic {
-    debug true
+    // debug true
     publishDir "${params.work}",mode:"copy"
 
     input:
@@ -78,7 +78,7 @@ process artic {
 }
 
 process pangolin {
-    debug true
+    // debug true
     publishDir "${params.run}/work",mode:"move"
 
     input:

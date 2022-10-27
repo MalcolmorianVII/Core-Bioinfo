@@ -37,9 +37,9 @@ run_ch = Channel.fromPath(params.run,type: 'dir')
 
 workflow PROCESS_SEQ_DATA {
     mv_dir()
-    basecalling(run_ch)
+    basecalling(mv_dir.out,run_ch)
     barcoding(basecalling.out,run_ch)
-    artic(barcoding.our.barcodes,run_ch)
+    artic(barcoding.out.barcodes,run_ch)
     pangolin(artic.out)
 }
 

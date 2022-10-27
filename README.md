@@ -9,7 +9,9 @@
 
 3. Make a copy of `nextflow.config` file, and make the following changes to the new version:
 
-    a. In the `params` scope change the values of `minknow` to `path/to/test_data` & create `${HOME}/test_data/minion_runs` directory so  that the `run` variable should point to valid parent directory path.Change the  `owner` variable to the correct file ownerships on the local machine.
+    a. In the `params` scope:
+    
+        *. Change the values of `minknow` to `path/to/test_data` & create `${HOME}/test_data/minion_runs` directory so  that the `run` variable should point to valid parent directory path.Change the  `owner` variable to the correct file ownerships on the local machine.
 
     b. In the `env` scope ensure:
 
