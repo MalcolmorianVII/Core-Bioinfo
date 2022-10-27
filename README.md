@@ -26,7 +26,7 @@
 4. Ensure the following exists:
 
     a. Creating the following path on the local machine `${HOME}/test_data/minion_runs`
-
+    
     b. Download [this](https://www.dropbox.com/s/70i0xewtnqdqe2f/20210701_1420_MN33881_FAO36609_5c3b1ea9.csv?dl=0) seqtracker file to the local sequencing batch directory created after moving the batch directory in step 1 of process_seq_data.nf script
 
 5. Modify the following variables in the artic_covid_medaka.py in the covid_scripts directory as follows:
