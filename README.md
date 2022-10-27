@@ -24,16 +24,18 @@
     c. In the process scope `seqbox`, `artic` and `pangolin` processes should have conda variables point to the correct paths as reflected on the local system. These are paths that are displayed by conda env list e.g /home/bkutambe/miniconda3/envs/artic_new10
 
 4. Ensure the following exists:
+
     a. Creating the following path on the local machine `${HOME}/test_data/minion_runs`
+
     b. Download [this](https://www.dropbox.com/s/70i0xewtnqdqe2f/20210701_1420_MN33881_FAO36609_5c3b1ea9.csv?dl=0) seqtracker file to the local sequencing batch directory created after moving the batch directory in step 1 of process_seq_data.nf script
 
 5. Modify the following variables in the artic_covid_medaka.py in the covid_scripts directory as follows:
 
     a. `root_dir=/path/to/minion_run_directory/on_local_machine`
+
     b. `primer_scheme_directory=/path/to/primer_scheme_directory`
 
-6. Before adding the sequencing data to the database ensure the following:
-    a. Change the make_sequencing_seqbox_input.py to /home/bkutambe/test_data/minion_runs to reflect the local test_data path as created in step 4.a 
+6. Change the  `/home/bkutambe/test_data/minion_runs` in make_sequencing_seqbox_input.py to reflect the local test_data path as created in step 4.a 
 
 
 
