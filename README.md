@@ -35,7 +35,7 @@
 
 1. Install postgres
 2. Make a conda env according to `seqbox_conda_env.yaml` in the git repo
-3. Fork the code from [this] (https://github.com/flashton2003/seqbox)
+3. Fork the code from [this](https://github.com/flashton2003/seqbox) github repository
 4. Modify your python path `export PYTHONPATH="${PYTHONPATH}:/Users/flashton/Dropbox/scripts/seqbox/src"`
 5. Set the DATABASE_URL env variable to be the url of the database, e.g. `export DATABASE_URL=postgresql:///test_seqbox`
 6. Run `test/test_no_web.py`
