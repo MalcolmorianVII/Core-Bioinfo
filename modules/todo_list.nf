@@ -24,7 +24,7 @@ process mk_today {
 }
 
 process query_api {
-    publishDir "${SEQ_OUTPUT_DIR}", mode: "move"
+    publishDir "${SEQ_OUTPUT_DIR}", mode: "copy"
 
     input:
     val ready
