@@ -48,8 +48,8 @@ def get_barcodes():
     return [ "barcode0" + str(i) if i < 10 else "barcode" + str(i) for i in barcodes ]
 
 def run_with_different_schemes_and_models():
-    root_dir = '/home/bkutambe/data/minion_runs'
-    primer_scheme_directory = '/home/bkutambe/programs/Path_nCoV/reference/primer-schemes'
+    root_dir = f'{os.environ.get("BATCH_RUN_DIR")}'
+    primer_scheme_directory = f'{os.environ.get("PRIMER_SCHEME_DIRECTORY")}'
     # v1 is UNZA, v2 is Midnight, v3 is artic v3, v4 is artic v4
     # {batch:{scheme:[barcodes, etc]}} this way, we can handle multiple schemes and multiple batches in one function.
     barcodes = get_barcodes()
@@ -62,7 +62,7 @@ def run_with_different_schemes_and_models():
             for barcode in batches_schemes_barcodes[batch][scheme]:
                 if os.path.exists(f'{batch}_{barcode}.primertrimmed.rg.sorted.bam'):
                     continue
-                input_dir = f'{root_dir}/{batch}/fastq_pass/{barcode}'
+                input_dir = f'{root_dir}/fastq_pass/{barcode}'
                 # todo - need to add something here to check that the fastq exists, and if not continue
                 # todo - i'm pretty sure this try except loop isn't doing anything, so should remove it.
                 try:
