@@ -46,6 +46,7 @@
 
 ## Running the pipeline in test mode
 
+Check out into the test_mode branch and use the following commands:
 * Getting the todolist
 `nextflow run main_pipeline.nf -entry GENERATE_TODO_LIST -c test_nextflow.config --mode test` 
 
