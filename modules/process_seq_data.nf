@@ -29,14 +29,19 @@ process basecalling {
 
     input:
     val ready
-    path run_ch
+    path run_ch 
     
     output:
     path "${run_ch}/fastq"
 
     script:
+    if (params.mode == "test") 
     """
-    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x 'auto' -i ${run_ch}/fast5 -s ${run_ch}/fastq
+    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg  -i ${run_ch}/fast5 -s ${run_ch}/fastq
+    """
+    else 
+    """
+    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x "auto" -i ${run_ch}/fast5 -s ${run_ch}/fastq
     """
 }
 
@@ -53,8 +58,13 @@ process barcoding {
     path "${run_ch}/fastq_pass"
 
     script:
+    if (params.mode == "test")
     """
-    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x 'auto' -i ${fastq} -s ${run_ch}/fastq_pass
+    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196  -i ${fastq} -s ${run_ch}/fastq_pass
+    """
+    else
+    """
+    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x "auto" -i ${fastq} -s ${run_ch}/fastq_pass
     """
 }
 
