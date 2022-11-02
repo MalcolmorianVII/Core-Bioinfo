@@ -18,13 +18,13 @@ process mk_today {
 
     script:
     """
-    mkdir -p ${SEQ_OUTPUT_DIR}
+    mkdir -p ${TODAY_DIR}
     """
 
 }
 
 process query_api {
-    publishDir "${SEQ_OUTPUT_DIR}", mode: "copy"
+    publishDir "${TODAY_DIR}", mode: "copy"
 
     input:
     val ready
@@ -93,7 +93,7 @@ process pcr_results {
 process query_db {
     // debug true
 
-    publishDir "${SEQ_OUTPUT_DIR}",mode:"move"
+    publishDir "${TODAY_DIR}",mode:"move"
     
     input:
     val pcr_results

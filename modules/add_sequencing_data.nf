@@ -4,7 +4,7 @@ workflow {
     make_ch = Channel.fromPath(params.make_seqbox_input_py)
     run_ch = Channel.fromPath(params.run)
     mk_today()
-    make_seq_seqbox_input(mk_today.out,SEQ_OUTPUT_DIR,make_ch)
+    make_seq_seqbox_input(mk_today.out,TODAY_DIR,make_ch)
     add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_batch) | view
     add_readset_batches(add_raw_sequencing_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.read_batch) | view
     add_extractions(add_readset_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
@@ -24,13 +24,13 @@ process make_seq_seqbox_input {
 
     input:
     val ready
-    path SEQ_OUTPUT_DIR
+    path TODAY_DIR
     file make_seq_out_py
 
     output:
-    path "${SEQ_OUTPUT_DIR}/raw_sequencing_batches.csv",emit:seq_batch
-    path "${SEQ_OUTPUT_DIR}/readset_batches.csv",emit:read_batch
-    path "${SEQ_OUTPUT_DIR}/sequencing.csv",emit:seq_csv
+    path "${TODAY_DIR}/raw_sequencing_batches.csv",emit:seq_batch
+    path "${TODAY_DIR}/readset_batches.csv",emit:read_batch
+    path "${TODAY_DIR}/sequencing.csv",emit:seq_csv
 
     script:
     """
@@ -216,6 +216,6 @@ process get_sequence_run_info {
 
     script:
     """
-    python ${projectDir}/query_db.py get_seq_run_info -i ${SEQ_OUTPUT_DIR}/${BATCH}.seqbox_export.xlsx
+    python ${projectDir}/query_db.py get_seq_run_info -i ${TODAY_DIR}/${BATCH}.seqbox_export.xlsx
     """
 }

@@ -19,7 +19,7 @@
 
         * SEQTRACKER points to the seqtracker file (in a csv format). For the test data  download [this](https://www.dropbox.com/s/70i0xewtnqdqe2f/20210701_1420_MN33881_FAO36609_5c3b1ea9.csv?dl=0) seqtracker file into the path that `run` variable points to. 
 
-        * SEQ_OUTPUT_DIR points the iso-dated directory that has been made in the infiles directory which will contain the following files; raw_sequencing_batches.csv,readset_batches.csv and sequencing.csv e.g /home/bkutambe/data/seqbox/infiles/2022.09.22
+        * TODAY_DIR points the iso-dated directory that has been made in the infiles directory which will contain the following files; raw_sequencing_batches.csv,readset_batches.csv and sequencing.csv e.g /home/bkutambe/data/seqbox/infiles/2022.09.22
 
         * gpu2_seqbox_config should point to the right seqbox config.yaml file e.g. [this](https://github.com/flashton2003/seqbox_configs/blob/main/mlw_gpu1_seqbox_config.yaml) link.
 

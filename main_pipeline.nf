@@ -46,7 +46,7 @@ workflow PROCESS_SEQ_DATA {
 workflow ADD_SEQ_DATA {
     make_ch = Channel.fromPath(params.make_seqbox_input_py)
     mk_today()
-    make_seq_seqbox_input(mk_today.out,SEQ_OUTPUT_DIR,make_ch)
+    make_seq_seqbox_input(mk_today.out,TODAY_DIR,make_ch)
     add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_batch) | view
     add_readset_batches(add_raw_sequencing_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.read_batch) | view
     add_extractions(add_readset_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
