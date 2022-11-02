@@ -20,7 +20,7 @@ if (params.mode == "test") {
     assert BATCH.startsWith("test"),"Test data should start with test"
 } else{
     assert  ! DATABASE_URL.split("/")[-1].startsWith("test"),"Production database URL should not start with test"
-    assert ! BATCH.startsWith("test"),"You are using test data in the production"
+    assert ! BATCH.startsWith("test"),"You are using test data in  production"
 }   
 
 run_dir_ch = Channel.fromPath(params.run_dir,type: 'dir')
@@ -29,6 +29,7 @@ seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
 workflow GENERATE_TODO_LIST {
     get_covid_cases_ch = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
     seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
+
     mk_today_dir() | view
     query_api(mk_today_dir.out,get_covid_cases_ch) | view 
     add_sample_sources(query_api.out,seqbox_cmd_ch) | view
