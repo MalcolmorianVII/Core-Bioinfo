@@ -1,5 +1,5 @@
 nextflow.enable.dsl=2
-include  { mk_today;query_api;sample_sources;samples;pcr_results;query_db } from './modules/todo_list'
+include  { mk_today_dir;query_api;add_sample_sources;add_samples;add_pcr_results;get_todolist } from './modules/todo_list'
 include { mv_dir;basecalling;barcoding;artic;pangolin } from './modules/process_seq_data'
 include {
     make_seq_seqbox_input;
@@ -13,7 +13,7 @@ include {
     add_artic_consensus_to_filestructure;
     add_artic_covid_results;
     add_pangolin_results;
-    get_sequence_run_info } from './modules/add_sequencing_data'
+    get_latest_seq_data } from './modules/add_sequencing_data'
 
 if (params.mode == "test") {
     assert  DATABASE_URL.split("/")[-1].startsWith("test"),"You are running in test mode but  the database URL does not start with test"
@@ -24,16 +24,17 @@ if (params.mode == "test") {
 }   
 
 workflow GENERATE_TODO_LIST {
-    ch_api = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
-    mk_today() | view
-    query_api(mk_today.out,ch_api) | view 
-    sample_sources(query_api.out,params.seqbox_cmd_py) | view
-    samples(query_api.out,params.seqbox_cmd_py,sample_sources.out) | view
-    pcr_results(query_api.out,params.seqbox_cmd_py,samples.out) | view
-    query_db(pcr_results.out) | view
+    get_covid_cases_ch = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
+    seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
+    mk_today_dir() | view
+    query_api(mk_today_dir.out,get_covid_cases_ch) | view 
+    add_sample_sources(query_api.out,seqbox_cmd_ch) | view
+    add_samples(query_api.out,seqbox_cmd_ch,add_sample_sources.out) | view
+    add_pcr_results(query_api.out,seqbox_cmd_ch,add_samples.out) | view
+    get_todolist(add_pcr_results.out) | view
 }
 
-run_ch = Channel.fromPath(params.run,type: 'dir')
+run_ch = Channel.fromPath(params.run_dir,type: 'dir')
 
 workflow PROCESS_SEQ_DATA {
     mv_dir()
@@ -45,8 +46,8 @@ workflow PROCESS_SEQ_DATA {
 
 workflow ADD_SEQ_DATA {
     make_ch = Channel.fromPath(params.make_seqbox_input_py)
-    mk_today()
-    make_seq_seqbox_input(mk_today.out,TODAY_DIR,make_ch)
+    mk_today_dir()
+    make_seq_seqbox_input(mk_today_dir.out,TODAY_DIR,make_ch)
     add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_batch) | view
     add_readset_batches(add_raw_sequencing_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.read_batch) | view
     add_extractions(add_readset_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
@@ -57,7 +58,7 @@ workflow ADD_SEQ_DATA {
     add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,params.file_inhandling_py) | view
     add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_ch,params.seqbox_cmd_py) | view
     add_pangolin_results(add_artic_covid_results.out,run_ch,params.seqbox_cmd_py) | view
-    get_sequence_run_info(add_pangolin_results.out) | view
+    get_latest_seq_data(add_pangolin_results.out) | view
 }
 
 

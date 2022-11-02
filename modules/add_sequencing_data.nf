@@ -1,21 +1,23 @@
 nextflow.enable.dsl=2
-include  { mk_today} from './todo_list'
+include  { mk_today_dir} from './todo_list'
 workflow {
-    make_ch = Channel.fromPath(params.make_seqbox_input_py)
-    run_ch = Channel.fromPath(params.run)
-    mk_today()
-    make_seq_seqbox_input(mk_today.out,TODAY_DIR,make_ch)
-    add_raw_sequencing_batches(params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_batch) | view
-    add_readset_batches(add_raw_sequencing_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.read_batch) | view
-    add_extractions(add_readset_batches.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
-    add_covid_confirmatory_pcrs(add_extractions.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
-    add_tiling_pcrs(add_covid_confirmatory_pcrs.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv)| view
-    add_readsets(add_tiling_pcrs.out,params.seqbox_cmd_py,make_seq_seqbox_input.out.seq_csv) | view
-    add_readset_to_filestructure(add_readsets.out,params.file_inhandling_py,make_seq_seqbox_input.out.seq_csv) | view
-    add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,params.file_inhandling_py) | view
-    add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_ch,params.seqbox_cmd_py) | view
-    add_pangolin_results(add_artic_covid_results.out,run_ch,params.seqbox_cmd_py) | view
-    get_sequence_run_info(add_pangolin_results.out) | view
+    make_seq_output_ch = Channel.fromPath(params.make_seqbox_input_py)
+    run_dir_ch = Channel.fromPath(params.run_dir)
+    seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
+
+    mk_today_dir()
+    make_seq_seqbox_input(mk_today_dir.out,TODAY_DIR,make_seq_output_ch)
+    add_raw_sequencing_batches(seqbox_cmd_ch,make_seq_seqbox_input.out.seq_batch) 
+    add_readset_batches(add_raw_sequencing_batches.out,seqbox_cmd_ch,make_seq_seqbox_input.out.read_batch) 
+    add_extractions(add_readset_batches.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
+    add_covid_confirmatory_pcrs(add_extractions.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
+    add_tiling_pcrs(add_covid_confirmatory_pcrs.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv)
+    add_readsets(add_tiling_pcrs.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
+    add_readset_to_filestructure(add_readsets.out,params.file_inhandling_py,make_seq_seqbox_input.out.seq_csv) 
+    add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,params.file_inhandling_py) 
+    add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_dir_ch,seqbox_cmd_ch) 
+    add_pangolin_results(add_artic_covid_results.out,run_dir_ch,seqbox_cmd_ch) 
+    get_latest_seq_data(add_pangolin_results.out) 
 }
 
 
@@ -42,7 +44,7 @@ process add_raw_sequencing_batches {
     label "seqbox"
 
     input:
-    path seqbox_cmd_py
+    file seqbox_cmd_py
     file seq_batch
 
     output:
@@ -59,7 +61,7 @@ process add_readset_batches {
 
     input:
     val ready
-    path seqbox_cmd_py
+    file seqbox_cmd_py
     file read_batch
 
     output:
@@ -76,7 +78,7 @@ process add_extractions {
 
     input:
     val ready
-    path seqbox_cmd_py
+    file seqbox_cmd_py
     file seq_csv
 
     output:
@@ -93,7 +95,7 @@ process add_covid_confirmatory_pcrs {
 
     input:
     val ready
-    path seqbox_cmd_py
+    file seqbox_cmd_py
     file seq_csv
 
     output:
@@ -110,7 +112,7 @@ process add_tiling_pcrs {
 
     input:
     val ready
-    path seqbox_cmd_py
+    file seqbox_cmd_py
     file seq_csv
 
     output:
@@ -127,7 +129,7 @@ process add_readsets {
 
     input:
     val ready
-    path seqbox_cmd_py
+    file seqbox_cmd_py
     file seq_csv
 
     output:
@@ -144,7 +146,7 @@ process add_readset_to_filestructure {
 
     input:
     val ready
-    path file_inhandling_py
+    file file_inhandling_py
     file seq_csv
 
     output:
@@ -161,14 +163,14 @@ process add_artic_consensus_to_filestructure {
     
     input:
     val ready
-    path file_inhandling_py
+    file file_inhandling_py
 
     output:
     val true
 
     script:
     """
-    python ${file_inhandling_py} add_artic_consensus_to_filestructure -b ${BATCH} -c ${gpu2_seqbox_config} -d ${params.run}/work
+    python ${file_inhandling_py} add_artic_consensus_to_filestructure -b ${BATCH} -c ${gpu2_seqbox_config} -d ${params.run_dir}/work
     """
 }
 
@@ -177,15 +179,15 @@ process add_artic_covid_results {
 
     input:
     val ready
-    path run_ch
-    path seqbox_cmd_py
+    path run_dir_ch
+    file seqbox_cmd_py
 
     output:
     val true 
 
     script:
     """
-    python ${seqbox_cmd_py} add_artic_covid_results -i ${run_ch}/work/${BATCH}.qc.csv -b ${BATCH} -w ${WORKFLOW} -p ${PROFILE}
+    python ${seqbox_cmd_py} add_artic_covid_results -i ${run_dir_ch}/work/${BATCH}.qc.csv -b ${BATCH} -w ${WORKFLOW} -p ${PROFILE}
     """
 }
 
@@ -194,19 +196,19 @@ process add_pangolin_results {
 
     input:
     val ready
-    path run_ch
-    path seqbox_cmd_py
+    path run_dir_ch
+    file seqbox_cmd_py
 
     output:
     val true 
 
     script:
     """
-    python ${seqbox_cmd_py} add_pangolin_results -i ${run_ch}/work/${BATCH}.pangolin.lineage_report.csv -w ${WORKFLOW} -p ${PROFILE} -n
+    python ${seqbox_cmd_py} add_pangolin_results -i ${run_dir_ch}/work/${BATCH}.pangolin.lineage_report.csv -w ${WORKFLOW} -p ${PROFILE} -n
     """
 }
 
-process get_sequence_run_info {
+process get_latest_seq_data {
     
     input:
     val ready
@@ -216,6 +218,6 @@ process get_sequence_run_info {
 
     script:
     """
-    python ${projectDir}/query_db.py get_seq_run_info -i ${TODAY_DIR}/${BATCH}.seqbox_export.xlsx
+    python ${projectDir}/query_db.py get_latest_seq_data -i ${TODAY_DIR}/${BATCH}.seqbox_export.xlsx
     """
 }

@@ -2,15 +2,16 @@ nextflow.enable.dsl=2
 
 workflow {
     get_covid_cases_ch = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
-    mk_today() | view
-    query_api(mk_today.out,get_covid_cases_ch) | view 
-    sample_sources(query_api.out,params.seqbox_cmd_py) | view
-    samples(query_api.out,params.seqbox_cmd_py,sample_sources.out) | view
-    pcr_results(query_api.out,params.seqbox_cmd_py,samples.out) | view
-    query_db(pcr_results.out) | view
+    seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
+    mk_today_dir() | view
+    query_api(mk_today_dir.out,get_covid_cases_ch)
+    add_sample_sources(query_api.out,seqbox_cmd_ch)
+    add_samples(query_api.out,seqbox_cmd_ch,add_sample_sources.out)
+    pcr_results(query_api.out,seqbox_cmd_ch,add_samples.out)
+    get_todolist(pcr_results.out)
 }
 
-process mk_today {
+process mk_today_dir {
     tag "Make directory with todays date as name"
 
     output:
@@ -39,64 +40,64 @@ process query_api {
     """
 }
 
-process sample_sources {
+process add_sample_sources {
     label "seqbox"
 
     input:
     file covid_cases
-    path seq
+    file seqbox_cmd_py
 
     output:
-    stdout
+    val true
 
     script:
     """
-    python3 ${seq} add_sample_sources -i ${covid_cases}
+    python3 ${seqbox_cmd_py} add_sample_sources -i ${covid_cases}
     """
 }
 
-process samples {
+process add_samples {
     label "seqbox"
 
     input:
     file covid_cases
-    path seq
-    val sample_source
+    file seqbox_cmd_py
+    val ready
 
     output:
-    stdout
+    val true
 
     script:
     """
-    python3 ${seq} add_samples -i ${covid_cases}
+    python3 ${seqbox_cmd_py} add_samples -i ${covid_cases}
     """
 }
 
-process pcr_results {
+process add_pcr_results {
     // debug true
     label "seqbox"
 
     input:
     file covid_cases
-    path seq
-    val sample
+    file seqbox_cmd_py
+    val ready
 
     output:
-    stdout
+    val true
 
     script:
     """
-    python3 ${seq} add_pcr_results -i ${covid_cases}
+    python3 ${seqbox_cmd_py} add_pcr_results -i ${covid_cases}
     """
 }
 
-process query_db {
+process get_todolist {
     // debug true
 
     publishDir "${TODAY_DIR}",mode:"move"
     
     input:
-    val pcr_results
+    val ready
 
     output:
     path "${today}.seqbox_todolist.xlsx"

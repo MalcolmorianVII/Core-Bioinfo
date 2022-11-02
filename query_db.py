@@ -58,7 +58,7 @@ def get_seqbox_export(query,outfile):
 def run_command(args):
        if args.command == "get_todolist":
               get_seqbox_export(todolist_query,args.filename)
-       elif args.command == "get_seq_run_info":
+       elif args.command == "get_latest_seq_data":
               get_seqbox_export(sequence_run_info_query,args.filename)
 
 def main():
@@ -68,7 +68,7 @@ def main():
        get_todolist_parser.add_argument('-i',dest='filename',help='Filename of query output',
        required=True)
 
-       get_seq_run_info_parser = subparsers.add_parser('get_seq_run_info',help='Getting sequencing info from seqbox')
+       get_seq_run_info_parser = subparsers.add_parser('get_latest_seq_data',help='Getting sequencing info from seqbox')
        get_seq_run_info_parser.add_argument('-i',dest='filename',help='Return a file with latest sequencing info from the database',
        required=True)
 
