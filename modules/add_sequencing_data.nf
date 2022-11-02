@@ -25,7 +25,7 @@ process make_seq_seqbox_input {
     input:
     val ready
     path SEQ_OUTPUT_DIR
-    file inseq
+    file make_seq_out_py
 
     output:
     path "${SEQ_OUTPUT_DIR}/raw_sequencing_batches.csv",emit:seq_batch
@@ -34,7 +34,7 @@ process make_seq_seqbox_input {
 
     script:
     """
-    python ${inseq} 
+    python ${make_seq_out_py} ${params.run_dir}
     """
 }
 
