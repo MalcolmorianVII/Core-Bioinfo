@@ -3,7 +3,7 @@ nextflow.enable.dsl=2
 workflow {
     run_dir_ch = Channel.fromPath(params.run_dir,type: 'dir')
     mv_minknw_dir()
-    basecalling(run_dir_ch)
+    basecalling(mv_minknw_dir.out,run_dir_ch)
     barcoding(basecalling.out,run_dir_ch)
     artic(barcoding.our.barcodes,run_dir_ch)
     pangolin(artic.out)
