@@ -2,6 +2,7 @@ import os
 import glob
 import pandas as pd
 from pathlib import Path
+import sys
 
 class DuplicationError(Exception):
     pass
@@ -48,7 +49,7 @@ def get_barcodes():
     return [ "barcode0" + str(i) if i < 10 else "barcode" + str(i) for i in barcodes ]
 
 def run_with_different_schemes_and_models():
-    root_dir = f'{os.environ.get("BATCH_RUN_DIR")}'
+    root_dir = sys.argv[1]
     primer_scheme_directory = f'{os.environ.get("PRIMER_SCHEME_DIRECTORY")}'
     # v1 is UNZA, v2 is Midnight, v3 is artic v3, v4 is artic v4
     # {batch:{scheme:[barcodes, etc]}} this way, we can handle multiple schemes and multiple batches in one function.
