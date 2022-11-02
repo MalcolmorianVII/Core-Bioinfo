@@ -35,7 +35,7 @@ process basecalling {
     path "${run_ch}/fastq"
 
     script:
-    if (params.mode == "test") 
+    if (params.CPU == "ON") 
     """
     guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg  -i ${run_ch}/fast5 -s ${run_ch}/fastq
     """
@@ -58,7 +58,7 @@ process barcoding {
     path "${run_ch}/fastq_pass"
 
     script:
-    if (params.mode == "test")
+    if (params.CPU == "ON")
     """
     guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196  -i ${fastq} -s ${run_ch}/fastq_pass
     """
@@ -83,7 +83,7 @@ process artic {
     script:
     """
     mkdir -p ${work_ch} && cd ${work_ch}
-    python ${artic_covid_medaka_py}
+    python ${artic_covid_medaka_py} ${params.run}
     """
 }
 
