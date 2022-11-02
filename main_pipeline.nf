@@ -1,6 +1,6 @@
 nextflow.enable.dsl=2
 include  { mk_today_dir;query_api;add_sample_sources;add_samples;add_pcr_results;get_todolist } from './modules/todo_list'
-include { mv_dir;basecalling;barcoding;artic;pangolin } from './modules/process_seq_data'
+include { mv_minknw_dir;basecalling;barcoding;artic;pangolin } from './modules/process_seq_data'
 include {
     make_seq_seqbox_input;
     add_raw_sequencing_batches;
@@ -37,8 +37,8 @@ workflow GENERATE_TODO_LIST {
 run_ch = Channel.fromPath(params.run_dir,type: 'dir')
 
 workflow PROCESS_SEQ_DATA {
-    mv_dir()
-    basecalling(mv_dir.out,run_ch)
+    mv_minknw_dir()
+    basecalling(mv_minknw_dir.out,run_ch)
     barcoding(basecalling.out,run_ch)
     artic(barcoding.out.barcodes,run_ch)
     pangolin(artic.out)

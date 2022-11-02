@@ -2,7 +2,7 @@ nextflow.enable.dsl=2
 
 workflow {
     run_dir_ch = Channel.fromPath(params.run_dir,type: 'dir')
-    mv_dir()
+    mv_minknw_dir()
     basecalling(run_dir_ch)
     barcoding(basecalling.out,run_dir_ch)
     artic(barcoding.our.barcodes,run_dir_ch)
@@ -10,7 +10,7 @@ workflow {
 }
 
 
-process mv_dir {
+process mv_minknw_dir {
     tag "Move SARS-CoV2 run from Minknow directory"
 
     output:
