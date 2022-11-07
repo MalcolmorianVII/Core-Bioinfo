@@ -17,10 +17,10 @@ include {
 
 if (params.mode == "test") {
     assert  DATABASE_URL.split("/")[-1].startsWith("test"),"You are running in test mode but  the database URL does not start with test"
-    assert BATCH.startsWith("test"),"Test data should start with test"
+    assert BATCH.endsWith("test"),"Test data should end with test"
 } else{
     assert  ! DATABASE_URL.split("/")[-1].startsWith("test"),"Production database URL should not start with test"
-    assert ! BATCH.startsWith("test"),"You are using test data in  production"
+    assert ! BATCH.endsWith("test"),"You are using test data in  production"
 }   
 
 run_dir_ch = Channel.fromPath(params.run_dir,type: 'dir')

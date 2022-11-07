@@ -61,7 +61,6 @@ process barcoding {
 
 process artic {
     // debug true
-    publishDir "${params.work}",mode:"copy"
 
     input:
     val ready
@@ -72,8 +71,8 @@ process artic {
 
     script:
     """
-    mkdir -p ${work_ch} && cd ${work_ch}
-    python ${artic_covid_medaka_py} ${params.run_dir}
+    mkdir -p ${run_dir_ch}/work && cd ${run_dir_ch}/work
+    python ${params.artic_covid_medaka_py} ${params.run_dir}
     """
 }
 

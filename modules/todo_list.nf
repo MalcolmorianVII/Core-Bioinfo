@@ -4,7 +4,7 @@ workflow {
     get_covid_cases_ch = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
     seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
     mk_today_dir() | view
-    query_api(mk_today_dir.out,get_covid_cases_ch)
+    query_api(mk_today_dir.out,get_covid_cases_ch) | view
     add_sample_sources(query_api.out,seqbox_cmd_ch)
     add_samples(query_api.out,seqbox_cmd_ch,add_sample_sources.out)
     pcr_results(query_api.out,seqbox_cmd_ch,add_samples.out)

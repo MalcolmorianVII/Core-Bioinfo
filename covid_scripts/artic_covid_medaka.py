@@ -45,7 +45,7 @@ def gather_qc_csvs(batch_name):
 
 def get_barcodes():
     df = pd.read_csv(os.environ.get('SEQTRACKER'))
-    barcodes =  df[ df['ID'] != 'neg']['barcode'].dropna(axis=0).astype('int64').tolist() # Get all the non-null barcodes whose ID is not neg & convert from float to int to str & Add 			words "barcode" to each row 
+    barcodes =  df[ df['Sample ID'] != 'neg']['Barcode'].dropna(axis=0).astype('int64').tolist() # Get all the non-null barcodes whose ID is not neg & convert from float to int to str & Add 			words "barcode" to each row 
     return [ "barcode0" + str(i) if i < 10 else "barcode" + str(i) for i in barcodes ]
 
 def run_with_different_schemes_and_models():
