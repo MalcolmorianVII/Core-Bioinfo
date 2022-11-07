@@ -48,6 +48,7 @@
 
 Check out into the test_mode branch and use the following commands:
 * Getting the todolist
+First run `run_test_02.sh` to add projects to the database.
 `nextflow run main_pipeline.nf -entry GENERATE_TODO_LIST -c test_nextflow.config --mode test` 
 
 * Processing the sequencing data
