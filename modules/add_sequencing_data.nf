@@ -4,7 +4,7 @@ workflow {
     make_seq_output_ch = Channel.fromPath(params.make_seqbox_input_py)
     run_dir_ch = Channel.fromPath(params.run_dir)
     seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
-    file_inhandling_ch = Channel.fromPath(params.file_inhandling_py)
+    inhandling_ch = Channel.fromPath(params.inhandling_py)
 
     mk_today_dir()
     make_seq_seqbox_input(mk_today_dir.out,TODAY_DIR,make_seq_output_ch)
@@ -15,8 +15,8 @@ workflow {
     add_tiling_pcrs(add_covid_confirmatory_pcrs.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv)
     add_readsets(add_tiling_pcrs.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
     
-    add_readset_to_filestructure(add_readsets.out,file_inhandling_ch,make_seq_seqbox_input.out.seq_csv) 
-    add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,file_inhandling_ch) 
+    add_readset_to_filestructure(add_readsets.out,inhandling_ch,make_seq_seqbox_input.out.seq_csv) 
+    add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,inhandling_ch) 
     add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_dir_ch,seqbox_cmd_ch) 
     add_pangolin_results(add_artic_covid_results.out,run_dir_ch,seqbox_cmd_ch) 
     get_latest_seq_data(add_pangolin_results.out) 
@@ -148,7 +148,7 @@ process add_readset_to_filestructure {
 
     input:
     val ready
-    file file_inhandling_py
+    file inhandling_py
     file seq_csv
 
     output:
@@ -156,7 +156,7 @@ process add_readset_to_filestructure {
 
     script:
     """
-    python ${file_inhandling_py} add_readset_to_filestructure -i ${seq_csv} -c ${gpu2_seqbox_config} -s -n
+    python ${inhandling_py} add_readset_to_filestructure -i ${seq_csv} -c ${gpu2_seqbox_config} -s -n
     """
 }
 

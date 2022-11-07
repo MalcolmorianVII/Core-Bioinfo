@@ -47,22 +47,25 @@ workflow PROCESS_SEQ_DATA {
 }
 
 workflow ADD_SEQ_DATA {
-   make_seq_output_ch = Channel.fromPath(params.make_seqbox_input_py)
-   run_dir_ch = Channel.fromPath(params.run_dir)
+    make_seq_output_ch = Channel.fromPath(params.make_seqbox_input_py)
+    // run_dir_ch = Channel.fromPath(params.run_dir)
+    // seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
+    inhandling_ch = Channel.fromPath(params.inhandling_py)
 
-   mk_today_dir()
-   make_seq_seqbox_input(mk_today_dir.out,TODAY_DIR,make_seq_output_ch)
-   add_raw_sequencing_batches(seqbox_cmd_ch,make_seq_seqbox_input.out.seq_batch) 
-   add_readset_batches(add_raw_sequencing_batches.out,seqbox_cmd_ch,make_seq_seqbox_input.out.read_batch) 
-   add_extractions(add_readset_batches.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
-   add_covid_confirmatory_pcrs(add_extractions.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
-   add_tiling_pcrs(add_covid_confirmatory_pcrs.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv)
-   add_readsets(add_tiling_pcrs.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
-   add_readset_to_filestructure(add_readsets.out,params.file_inhandling_py,make_seq_seqbox_input.out.seq_csv) 
-   add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,params.file_inhandling_py) 
-   add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_dir_ch,seqbox_cmd_ch) 
-   add_pangolin_results(add_artic_covid_results.out,run_dir_ch,seqbox_cmd_ch) 
-   get_latest_seq_data(add_pangolin_results.out) 
+    mk_today_dir()
+    make_seq_seqbox_input(mk_today_dir.out,TODAY_DIR,make_seq_output_ch)
+    add_raw_sequencing_batches(seqbox_cmd_ch,make_seq_seqbox_input.out.seq_batch) 
+    add_readset_batches(add_raw_sequencing_batches.out,seqbox_cmd_ch,make_seq_seqbox_input.out.read_batch) 
+    add_extractions(add_readset_batches.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
+    add_covid_confirmatory_pcrs(add_extractions.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
+    add_tiling_pcrs(add_covid_confirmatory_pcrs.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv)
+    add_readsets(add_tiling_pcrs.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
+    
+    add_readset_to_filestructure(add_readsets.out,inhandling_ch,make_seq_seqbox_input.out.seq_csv) 
+    add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,inhandling_ch) 
+    add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_dir_ch,seqbox_cmd_ch) 
+    add_pangolin_results(add_artic_covid_results.out,run_dir_ch,seqbox_cmd_ch) 
+    get_latest_seq_data(add_pangolin_results.out) 
 }
 
 
