@@ -48,12 +48,12 @@
 
 Check out into the test_mode branch and use the following commands:
 * Getting the todolist.In the test mode projects will have to be added in the database so 
-first run `run_test_02.sh` to add projects to the database.
+first run `run_test_02.sh` to add projects to the database.Then run
 `nextflow run main_pipeline.nf -entry GENERATE_TODO_LIST -c test_nextflow.config --mode test` 
 
-* Processing the sequencing data
+* To process the sequencing data run
 `nextflow run main_pipeline.nf -entry PROCESS_SEQ_DATA -c test_nextflow.config --mode test`
 
-* Combine the sequencing data with the sample information 
+* To combine the sequencing data with the sample information run
 `nextflow run main_pipeline.nf -entry ADD_SEQ_DATA -c test_nextflow.config --mode test`
 
