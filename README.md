@@ -47,8 +47,8 @@
 ## Running the pipeline in test mode
 
 Check out into the test_mode branch and use the following commands:
-* Getting the todolist
-First run `run_test_02.sh` to add projects to the database.
+* Getting the todolist.In the test mode projects will have to be added in the database so 
+first run `run_test_02.sh` to add projects to the database.
 `nextflow run main_pipeline.nf -entry GENERATE_TODO_LIST -c test_nextflow.config --mode test` 
 
 * Processing the sequencing data
