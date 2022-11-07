@@ -62,6 +62,8 @@ process barcoding {
 process artic {
     // debug true
 
+    cpus 48
+    
     input:
     val ready
     path run_dir_ch
