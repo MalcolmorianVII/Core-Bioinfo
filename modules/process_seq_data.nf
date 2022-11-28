@@ -17,10 +17,16 @@ process mv_minknw_dir {
     val true
 
     script:
-    """
-    mv ${params.minknow} ${params.run_dir}
-    chown -R ${params.owner} ${params.run_dir}
-    """
+    File minion_dir = new File("$params.run_dir")
+    if (minion_dir.exists()) {
+        """echo Directory already moved"""
+    } else {
+        """
+        sudo mv ${params.minknow} ${params.run_dir}
+        sudo chown -R ${params.owner} ${params.run_dir}
+        """
+    }
+    
 }
 
 process basecalling {
@@ -32,12 +38,20 @@ process basecalling {
     path run_dir_ch 
     
     output:
-    path "${run_dir_ch}/fastq"
+    val true,emit:basecalled
+    path "${run_dir_ch}/fastq*"
 
     script:
-    """
-    guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x "auto" -i ${run_dir_ch}/fast5 -s ${run_dir_ch}/fastq
-    """
+    File fastq = new File("$params.run_dir/fastq_pass")
+    if (fastq.exists()) {
+        """
+        echo Skipping basecalling since basecalled data exists
+        """
+    } else {
+        """
+        guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x "auto" -i ${run_dir_ch}/fast5 -s ${run_dir_ch}/fastq
+        """
+    }
 }
 
 process barcoding {
@@ -45,7 +59,7 @@ process barcoding {
     // debug true
 
     input:
-    path fastq
+    val ready
     path run_dir_ch
 
     output:
@@ -53,9 +67,17 @@ process barcoding {
     path "${run_dir_ch}/fastq_pass"
 
     script:
-    """
-    guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x "auto" -i ${fastq} -s ${run_dir_ch}/fastq_pass
-    """
+    File fastqPass = new File("$params.run_dir/fastq_pass")
+    if (fastqPass.exists()) {
+        """
+        echo Skipping barcoding since we have barcoded data
+        """
+    } else {
+        """
+        guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x "auto" -i ${run_dir_ch}/fastq -s ${run_dir_ch}/fastq_pass
+        """
+    }
+    
 }
 
 
