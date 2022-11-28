@@ -22,6 +22,16 @@ workflow {
     get_latest_seq_data(add_pangolin_results.out) 
 }
 
+process move_to_archive{
+
+    output:
+    path archive 
+
+    script:
+    """
+    mv ${params.run_dir} ${params.archive} 
+    """
+}
 
 process make_seq_seqbox_input {
     debug true
