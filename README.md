@@ -57,3 +57,7 @@ first run `run_test_02.sh` to add projects to the database.Then run
 * To combine the sequencing data with the sample information run
 `nextflow run main_pipeline.nf -entry ADD_SEQ_DATA -c test_nextflow.config --mode test`
 
+## Running the pipeline in production
+
+* Getting the todolist.
+`nextflow run main_pipeline.nf -entry GENERATE_TODO_LIST` 
