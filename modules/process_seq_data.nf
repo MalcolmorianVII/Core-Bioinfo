@@ -13,17 +13,23 @@ workflow {
 process mv_minknw_dir {
     tag "Move SARS-CoV2 run from Minknow directory"
 
+    publishDir params.run_dir,mode:"move"
+
+    input:
+    path source
+
     output:
+    path ${BATCH}
     val true
 
     script:
-    File minion_dir = new File("$params.run_dir")
+    File minion_dir = new File("${params.run_dir}/${BATCH}")
     if (minion_dir.exists()) {
         """echo Directory already moved"""
     } else {
         """
-        sudo mv ${params.minknow} ${params.run_dir}
-        sudo chown -R ${params.owner} ${params.run_dir}
+        sudo mv ${params.minknow} ${BATCH}
+        sudo chown -R ${params.owner} ${BATCH}
         """
     }
     
