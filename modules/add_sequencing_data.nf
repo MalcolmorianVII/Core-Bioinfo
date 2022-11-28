@@ -24,12 +24,18 @@ workflow {
 
 process move_to_archive{
 
+    publishDir params.archive,mode:"move"
+
+    input:
+    path source
+
     output:
-    path archive 
+    path "${BATCH}"
+    val true 
 
     script:
     """
-    mv ${params.run_dir} ${params.archive} 
+    mv ${source} ${BATCH} 
     """
 }
 

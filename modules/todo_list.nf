@@ -107,3 +107,19 @@ process get_todolist {
     python3 ${projectDir}/query_db.py get_todolist -i ${today}.seqbox_todolist.xlsx
     """
 }
+
+process move_to_archive {
+
+    publishDir params.destination,mode:"move"
+
+    input:
+    path source
+
+    output:
+    path "${today}"
+
+    script:
+    """
+    mv ${source}/${today} ${today} 
+    """
+}
