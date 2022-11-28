@@ -51,7 +51,6 @@ def get_data(url, headers):
     
     payload = {}
     response = requests.get(url, data=json.dumps(payload), headers=headers)
-    print(response.text)
     
     
     clean_response_text = response.text.lstrip('<br />\n<b>Warning</b>:  Undefined array key 0 in <b>/var/www/html/api/v1/R/classes/Results/Covid.class.php</b> on line <b>43</b><br />\n')
