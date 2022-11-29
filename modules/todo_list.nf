@@ -9,6 +9,7 @@ workflow {
     add_samples(query_api.out,seqbox_cmd_ch,add_sample_sources.out)
     pcr_results(query_api.out,seqbox_cmd_ch,add_samples.out)
     get_todolist(pcr_results.out)
+    // archive_infiles(TODAY_DIR)
 }
 
 process mk_today_dir {
@@ -108,9 +109,9 @@ process get_todolist {
     """
 }
 
-process move_to_archive {
+process archive_infiles {
 
-    publishDir params.destination,mode:"move"
+    publishDir params.archive_infiles,mode:"move"
 
     input:
     path source
