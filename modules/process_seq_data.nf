@@ -7,6 +7,7 @@ workflow {
     barcoding(basecalling.out,run_dir_ch)
     artic(barcoding.our.barcodes,run_dir_ch)
     pangolin(artic.out)
+    move_to_archive(pangolin.out,params.run_dir)
 }
 
 
@@ -48,7 +49,7 @@ process basecalling {
     path "${run_dir_ch}/fastq*"
 
     script:
-    File fastq = new File("$params.run_dir/fastq_pass")
+    File fastq = new File("${params.run_dir}/fastq_pass")
     if (fastq.exists()) {
         """
         echo Skipping basecalling since basecalled data exists
@@ -73,7 +74,7 @@ process barcoding {
     path "${run_dir_ch}/fastq_pass"
 
     script:
-    File fastqPass = new File("$params.run_dir/fastq_pass")
+    File fastqPass = new File("${params.run_dir}/fastq_pass")
     if (fastqPass.exists()) {
         """
         echo Skipping barcoding since we have barcoded data
@@ -121,3 +122,21 @@ process pangolin {
     pangolin --outfile ${BATCH}.pangolin.lineage_report.csv ${consensus}
     """
 }
+
+process move_to_archive{
+
+    publishDir params.archive_runs,mode:"move"
+
+    input:
+    path source
+
+    output:
+    path "${BATCH}"
+    val true,emit:archived 
+
+    script:
+    """
+    mv ${source}/${BATCH} ${BATCH} 
+    """
+}
+

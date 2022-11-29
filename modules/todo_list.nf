@@ -9,7 +9,7 @@ workflow {
     add_samples(query_api.out,seqbox_cmd_ch,add_sample_sources.out)
     pcr_results(query_api.out,seqbox_cmd_ch,add_samples.out)
     get_todolist(pcr_results.out)
-    // archive_infiles(TODAY_DIR)
+    archive_infiles(get_todolist.out.done,FAST_INFILES)
 }
 
 process mk_today_dir {
@@ -20,24 +20,24 @@ process mk_today_dir {
 
     script:
     """
-    mkdir -p ${TODAY_DIR}
+    mkdir -p ${FAST_INFILES}/${TODAY}
     """
 
 }
 
 process query_api {
-    publishDir "${TODAY_DIR}", mode: "copy"
+    publishDir "${FAST_INFILES}/${TODAY}", mode: "copy"
 
     input:
     val ready
     file get_covid_cases_py
 
     output:
-    file("${today}.sample_source_sample_pcrs.csv")
+    file("${TODAY}.sample_source_sample_pcrs.csv")
 
     script:
     """
-    python3 ${get_covid_cases_py} > ${today}.sample_source_sample_pcrs.csv
+    python3 ${get_covid_cases_py} > ${TODAY}.sample_source_sample_pcrs.csv
     """
 }
 
@@ -95,17 +95,18 @@ process add_pcr_results {
 process get_todolist {
     // debug true
 
-    publishDir "${TODAY_DIR}",mode:"move"
+    publishDir "${FAST_INFILES}/${TODAY}",mode:"move"
     
     input:
     val ready
 
     output:
-    path "${today}.seqbox_todolist.xlsx"
+    path "${TODAY}.seqbox_todolist.xlsx"
+    val true,emit:done
 
     script:
     """
-    python3 ${projectDir}/query_db.py get_todolist -i ${today}.seqbox_todolist.xlsx
+    python3 ${projectDir}/query_db.py get_todolist -i ${TODAY}.seqbox_todolist.xlsx
     """
 }
 
@@ -114,13 +115,14 @@ process archive_infiles {
     publishDir params.archive_infiles,mode:"move"
 
     input:
+    val ready
     path source
 
     output:
-    path "${today}"
+    path "${TODAY}"
 
     script:
     """
-    mv ${source}/${today} ${today} 
+    mv ${source}/${TODAY} ${TODAY} 
     """
 }

@@ -168,7 +168,7 @@ def main():
     # batch_names = ['', '20211209_1200_MN34547_FAQ93072_fb74f355']
     batch_seqtracker = {os.environ.get('BATCH'):os.environ.get('SEQTRACKER')} # Seqtracker should point to a csv
 
-    outdir = os.environ.get('TODAY_DIR')
+    outdir = os.environ.get('FAST_INFILES')
     raw_seq_batch_outhandle = f'{outdir}/raw_sequencing_batches.csv'
     readset_batch_outhandle = f'{outdir}/readset_batches.csv'
     sequencing_outhandle = f'{outdir}/sequencing.csv'

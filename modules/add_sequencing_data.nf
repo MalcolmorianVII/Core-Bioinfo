@@ -1,5 +1,5 @@
 nextflow.enable.dsl=2
-include  { mk_today_dir} from './todo_list'
+include  { mk_today_dir;archive_infiles} from './todo_list'
 workflow {
     make_seq_output_ch = Channel.fromPath(params.make_seqbox_input_py)
     run_dir_ch = Channel.fromPath(params.run_dir)
@@ -19,38 +19,23 @@ workflow {
     add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,inhandling_ch) 
     add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_dir_ch,seqbox_cmd_ch) 
     add_pangolin_results(add_artic_covid_results.out,run_dir_ch,seqbox_cmd_ch) 
-    get_latest_seq_data(add_pangolin_results.out) 
+    get_latest_seq_data(add_pangolin_results.out)
+    archive_infiles(get_latest_seq_data.out,FAST_INFILES) 
 }
 
-process move_to_archive{
-
-    publishDir params.archive,mode:"move"
-
-    input:
-    path source
-
-    output:
-    path "${BATCH}"
-    val true 
-
-    script:
-    """
-    mv ${source} ${BATCH} 
-    """
-}
 
 process make_seq_seqbox_input {
     debug true
 
     input:
     val ready
-    path TODAY_DIR
+    path FAST_INFILES
     file make_seq_out_py
 
     output:
-    path "${TODAY_DIR}/raw_sequencing_batches.csv",emit:seq_batch
-    path "${TODAY_DIR}/readset_batches.csv",emit:read_batch
-    path "${TODAY_DIR}/sequencing.csv",emit:seq_csv
+    path "${FAST_INFILES}/${TODAY}/raw_sequencing_batches.csv",emit:seq_batch
+    path "${FAST_INFILES}/${TODAY}/readset_batches.csv",emit:read_batch
+    path "${FAST_INFILES}/${TODAY}/sequencing.csv",emit:seq_csv
 
     script:
     """
@@ -236,6 +221,23 @@ process get_latest_seq_data {
 
     script:
     """
-    python ${projectDir}/query_db.py get_latest_seq_data -i ${TODAY_DIR}/${BATCH}.seqbox_export.xlsx
+    python ${projectDir}/query_db.py get_latest_seq_data -i ${FAST_INFILES}/${TODAY}/${BATCH}.seqbox_export.xlsx
     """
 }
+
+// process archive_seq_infiles{
+
+//     publishDir params.archive_infiles,mode:"move"
+
+//     input:
+//     val ready
+//     path source
+
+//     output:
+//     path "${today}" 
+
+//     script:
+//     """
+//     mv ${source}/${today} ${today} 
+//     """
+// }
