@@ -54,7 +54,7 @@ process make_seq_seqbox_input {
 
     script:
     """
-    python ${make_seq_out_py} ${params.archive_runs}/
+    python ${make_seq_out_py} ${params.archive_runs}/${BATCH}
     """
 }
 
