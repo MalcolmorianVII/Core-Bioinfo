@@ -112,7 +112,7 @@ process get_todolist {
 
 process archive_infiles {
 
-    publishDir params.archive_infiles,mode:"move"
+    publishDir params.archive_infiles,mode:"copy"
 
     input:
     val ready

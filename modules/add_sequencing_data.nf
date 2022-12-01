@@ -39,7 +39,7 @@ process make_seq_seqbox_input {
 
     script:
     """
-    python ${make_seq_out_py} ${params.archive_runs}/${BATCH}
+    python ${make_seq_out_py} ${params.archive_runs}/${BATCH} ${FAST_INFILES}/${TODAY}
     """
 }
 
@@ -182,7 +182,6 @@ process add_artic_covid_results {
 
     input:
     val ready
-    path run_dir_ch
     file seqbox_cmd_py
 
     output:
@@ -190,7 +189,7 @@ process add_artic_covid_results {
 
     script:
     """
-    python ${seqbox_cmd_py} add_artic_covid_results -i ${run_dir_ch}/work/${BATCH}.qc.csv -b ${BATCH} -w ${WORKFLOW} -p ${PROFILE}
+    python ${seqbox_cmd_py} add_artic_covid_results -i ${params.archive_runs}/${BATCH}/work/${BATCH}.qc.csv -b ${BATCH} -w ${WORKFLOW} -p ${PROFILE}
     """
 }
 
@@ -199,7 +198,6 @@ process add_pangolin_results {
 
     input:
     val ready
-    path run_dir_ch
     file seqbox_cmd_py
 
     output:
@@ -207,7 +205,7 @@ process add_pangolin_results {
 
     script:
     """
-    python ${seqbox_cmd_py} add_pangolin_results -i ${run_dir_ch}/work/${BATCH}.pangolin.lineage_report.csv -w ${WORKFLOW} -p ${PROFILE} -n
+    python ${seqbox_cmd_py} add_pangolin_results -i ${params.archive_runs}/${BATCH}/work/${BATCH}.pangolin.lineage_report.csv -w ${WORKFLOW} -p ${PROFILE} -n
     """
 }
 

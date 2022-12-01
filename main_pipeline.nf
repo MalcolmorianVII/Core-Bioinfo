@@ -1,6 +1,6 @@
 nextflow.enable.dsl=2
-include  { mk_today_dir;query_api;add_sample_sources;add_samples;add_pcr_results;get_todolist } from './modules/todo_list'
-include { mv_minknw_dir;basecalling;barcoding;artic;pangolin } from './modules/process_seq_data'
+include  { mk_today_dir;query_api;add_sample_sources;add_samples;add_pcr_results;get_todolist;archive_infiles } from './modules/todo_list'
+include { mv_minknw_dir;basecalling;barcoding;artic;pangolin;move_to_archive } from './modules/process_seq_data'
 include {
     make_seq_seqbox_input;
     add_raw_sequencing_batches;
@@ -30,20 +30,22 @@ workflow GENERATE_TODO_LIST {
     get_covid_cases_ch = Channel.fromPath(params.get_covid_cases_py,checkIfExists:true)
     seqbox_cmd_ch = Channel.fromPath(params.seqbox_cmd_py,checkIfExists:true)
 
-    mk_today_dir() | view
-    query_api(mk_today_dir.out,get_covid_cases_ch) | view 
-    add_sample_sources(query_api.out,seqbox_cmd_ch) | view
-    add_samples(query_api.out,seqbox_cmd_ch,add_sample_sources.out) | view
-    add_pcr_results(query_api.out,seqbox_cmd_ch,add_samples.out) | view
-    get_todolist(add_pcr_results.out) | view
+    mk_today_dir()
+    query_api(mk_today_dir.out,get_covid_cases_ch) 
+    add_sample_sources(query_api.out,seqbox_cmd_ch)
+    add_samples(query_api.out,seqbox_cmd_ch,add_sample_sources.out)
+    add_pcr_results(query_api.out,seqbox_cmd_ch,add_samples.out)
+    get_todolist(add_pcr_results.out)
+    archive_infiles(get_todolist.out.done,FAST_INFILES)
 }
 
 workflow PROCESS_SEQ_DATA {
-    mv_minknw_dir()
-    basecalling(mv_minknw_dir.out,run_dir_ch)
-    barcoding(basecalling.out,run_dir_ch)
+    mv_minknw_dir(params.minknow)
+    basecalling(mv_minknw_dir.out.done,run_dir_ch)
+    barcoding(basecalling.out.basecalled,run_dir_ch)
     artic(barcoding.out.barcodes,run_dir_ch)
     pangolin(artic.out)
+    move_to_archive(pangolin.out.done,params.run_dir)
 }
 
 workflow ADD_SEQ_DATA {
@@ -53,7 +55,7 @@ workflow ADD_SEQ_DATA {
     inhandling_ch = Channel.fromPath(params.inhandling_py)
 
     mk_today_dir()
-    make_seq_seqbox_input(mk_today_dir.out,TODAY_DIR,make_seq_output_ch)
+    make_seq_seqbox_input(mk_today_dir.out,FAST_INFILES,make_seq_output_ch)
     add_raw_sequencing_batches(seqbox_cmd_ch,make_seq_seqbox_input.out.seq_batch) 
     add_readset_batches(add_raw_sequencing_batches.out,seqbox_cmd_ch,make_seq_seqbox_input.out.read_batch) 
     add_extractions(add_readset_batches.out,seqbox_cmd_ch,make_seq_seqbox_input.out.seq_csv) 
@@ -63,9 +65,10 @@ workflow ADD_SEQ_DATA {
     
     add_readset_to_filestructure(add_readsets.out,inhandling_ch,make_seq_seqbox_input.out.seq_csv) 
     add_artic_consensus_to_filestructure(add_readset_to_filestructure.out,inhandling_ch) 
-    add_artic_covid_results(add_artic_consensus_to_filestructure.out,run_dir_ch,seqbox_cmd_ch) 
-    add_pangolin_results(add_artic_covid_results.out,run_dir_ch,seqbox_cmd_ch) 
-    get_latest_seq_data(add_pangolin_results.out) 
+    add_artic_covid_results(add_artic_consensus_to_filestructure.out,seqbox_cmd_ch) 
+    add_pangolin_results(add_artic_covid_results.out,seqbox_cmd_ch) 
+    get_latest_seq_data(add_pangolin_results.out)
+    archive_infiles(get_latest_seq_data.out,FAST_INFILES) 
 }
 
 

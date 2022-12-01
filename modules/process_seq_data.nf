@@ -20,8 +20,8 @@ process mv_minknw_dir {
     path source
 
     output:
-    path ${BATCH}
-    val true
+    path "${BATCH}",optional: true
+    val true,emit:done
 
     script:
     File minion_dir = new File("${params.run_dir}/${BATCH}")
@@ -29,8 +29,8 @@ process mv_minknw_dir {
         """echo Directory already moved"""
     } else {
         """
-        sudo mv ${params.minknow} ${BATCH}
-        sudo chown -R ${params.owner} ${BATCH}
+        sudo chown -R ${params.owner} ${source}/${BATCH}
+        sudo mv ${source}/${BATCH} ${BATCH}
         """
     }
     
@@ -46,17 +46,17 @@ process basecalling {
     
     output:
     val true,emit:basecalled
-    path "${run_dir_ch}/fastq*"
+    path "${run_dir_ch}/${BATCH}/fastq*"
 
     script:
-    File fastq = new File("${params.run_dir}/fastq_pass")
+    File fastq = new File("${params.run_dir}/${BATCH}/fastq_pass")
     if (fastq.exists()) {
         """
         echo Skipping basecalling since basecalled data exists
         """
     } else {
         """
-        guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x "auto" -i ${run_dir_ch}/fast5 -s ${run_dir_ch}/fastq
+        guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x "auto" -i ${run_dir_ch}/${BATCH}/fast5 -s ${run_dir_ch}/${BATCH}/fastq
         """
     }
 }
@@ -71,17 +71,17 @@ process barcoding {
 
     output:
     val true,emit:barcodes
-    path "${run_dir_ch}/fastq_pass"
+    path "${run_dir_ch}/${BATCH}/fastq_pass"
 
     script:
-    File fastqPass = new File("${params.run_dir}/fastq_pass")
+    File fastqPass = new File("${params.run_dir}/${BATCH}/fastq_pass")
     if (fastqPass.exists()) {
         """
         echo Skipping barcoding since we have barcoded data
         """
     } else {
         """
-        guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x "auto" -i ${run_dir_ch}/fastq -s ${run_dir_ch}/fastq_pass
+        guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x "auto" -i ${run_dir_ch}/${BATCH}/fastq -s ${run_dir_ch}/${BATCH}/fastq_pass
         """
     }
     
@@ -98,24 +98,25 @@ process artic {
     path run_dir_ch
 
     output:
-    path "${run_dir_ch}/work/${BATCH}.consensus.fasta",emit: consensus
+    path "${run_dir_ch}/${BATCH}/work/${BATCH}.consensus.fasta",emit: consensus
 
     script:
     """
-    mkdir -p ${run_dir_ch}/work && cd ${run_dir_ch}/work
-    python ${params.artic_covid_medaka_py} ${params.run_dir}
+    mkdir -p ${run_dir_ch}/${BATCH}/work && cd ${run_dir_ch}/${BATCH}/work
+    python ${params.artic_covid_medaka_py} ${params.run_dir}/${BATCH}
     """
 }
 
 process pangolin {
     // debug true
-    publishDir "${params.run_dir}/work",mode:"move"
+    publishDir "${params.run_dir}/${BATCH}/work",mode:"move"
 
     input:
     path consensus
 
     output:
     path "${BATCH}.pangolin.lineage_report.csv"
+    val true,emit:done
 
     script:
     """
@@ -125,9 +126,10 @@ process pangolin {
 
 process move_to_archive{
 
-    publishDir params.archive_runs,mode:"move"
+    publishDir params.archive_runs,mode:"copy"
 
     input:
+    val ready
     path source
 
     output:
