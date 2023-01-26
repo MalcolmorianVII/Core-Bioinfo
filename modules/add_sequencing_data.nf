@@ -173,7 +173,7 @@ process add_artic_consensus_to_filestructure {
 
     script:
     """
-    python ${file_inhandling_py} add_artic_consensus_to_filestructure -b ${BATCH} -c ${gpu2_seqbox_config} -d ${params.run_dir}/work
+    python ${file_inhandling_py} add_artic_consensus_to_filestructure -b ${BATCH} -c ${gpu2_seqbox_config} -d ${params.archive_runs}/${BATCH}/work
     """
 }
 
