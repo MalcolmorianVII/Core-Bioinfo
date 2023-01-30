@@ -37,7 +37,6 @@ process mv_minknw_dir {
 }
 
 process basecalling {
-    label "guppy"
     // debug true
 
     input:
@@ -56,13 +55,12 @@ process basecalling {
         """
     } else {
         """
-        guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x "auto" -i ${run_dir_ch}/${BATCH}/fast5 -s ${run_dir_ch}/${BATCH}/fastq
+        /home/phil/programs/ont-guppy/ont-guppy/bin/guppy_basecaller guppy_basecaller -r -q 0 --disable_pings --compress_fastq -c dna_r9.4.1_450bps_sup.cfg -x "auto" -i ${run_dir_ch}/${BATCH}/fast5 -s ${run_dir_ch}/${BATCH}/fastq
         """
     }
 }
 
 process barcoding {
-    label "guppy"
     // debug true
 
     input:
@@ -81,7 +79,7 @@ process barcoding {
         """
     } else {
         """
-        guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x "auto" -i ${run_dir_ch}/${BATCH}/fastq -s ${run_dir_ch}/${BATCH}/fastq_pass
+        /home/phil/programs/ont-guppy/ont-guppy/bin/guppy_barcoder guppy_barcoder -r -q 0 --disable_pings --compress_fastq --require_barcodes_both_ends --barcode_kits EXP-NBD196 -x "auto" -i ${run_dir_ch}/${BATCH}/fastq -s ${run_dir_ch}/${BATCH}/fastq_pass
         """
     }
     
