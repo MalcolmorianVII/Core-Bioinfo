@@ -101,7 +101,7 @@ process artic {
     script:
     """
     mkdir -p ${run_dir_ch}/${BATCH}/work && cd ${run_dir_ch}/${BATCH}/work
-    python ${params.artic_covid_medaka_py} ${params.run_dir}/${BATCH}
+    python ${params.artic_covid_medaka_py} ${params.run_dir}/${BATCH} ${params.scheme}
     """
 }
 

@@ -45,17 +45,17 @@ def gather_qc_csvs(batch_name):
 
 def get_barcodes():
     df = pd.read_csv(os.environ.get('SEQTRACKER'),delimiter="\t")
-    print(df.columns)
-    barcodes =  df[ df['Sample ID'] != 'neg']['Barcode'].dropna(axis=0).astype('int64').tolist() # Get all the non-null barcodes whose ID is not neg & convert from float to int to str & Add 			words "barcode" to each row 
+    barcodes =  df[ df['Sample ID'] != 'neg']['Barcode'].dropna(axis=0).astype('int64').tolist() # Get all the non-null barcodes whose ID is not neg & convert from float to int to str & Add words "barcode" to each row 
     return [ "barcode0" + str(i) if i < 10 else "barcode" + str(i) for i in barcodes ]
 
 def run_with_different_schemes_and_models():
     root_dir = sys.argv[1]
+    primer_scheme = sys.argv[2] 
     primer_scheme_directory = f'{os.environ.get("PRIMER_SCHEME_DIRECTORY")}'
     # v1 is UNZA, v2 is Midnight, v3 is artic v3, v4 is artic v4
     # {batch:{scheme:[barcodes, etc]}} this way, we can handle multiple schemes and multiple batches in one function.
     barcodes = get_barcodes()
-    batches_schemes_barcodes = {os.environ.get('BATCH'):{'SARS-CoV-2/V2':barcodes}} 
+    batches_schemes_barcodes = {os.environ.get('BATCH'):{f'SARS-CoV-2/{primer_scheme}':barcodes}} 
     batches_basecallers = {os.environ.get('BATCH'):'r941_min_sup_g507'}
 
     scheme_cutoffs = {'SARS-CoV-2/V1': [750, 1250], 'SARS-CoV-2/V2':[950, 1450], 'SARS-CoV-2/V3':[400, 700], 'SARS-CoV-2/V4':[400, 700]}
@@ -72,6 +72,7 @@ def run_with_different_schemes_and_models():
                 except DuplicationError:
                     pass
                 if guppyplex_fastq is False:
+                    print(f'Guppyplex is false for barcode{barcode}')
                     continue
                 artic_minion_medaka(primer_scheme_directory, scheme, barcode, batches_basecallers[batch], guppyplex_fastq, batch)
                 if os.path.exists(f'{batch}_{barcode}.consensus.fasta'):
