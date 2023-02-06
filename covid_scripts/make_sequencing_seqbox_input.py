@@ -76,6 +76,7 @@ def assign_identifiers(seqtracker):
     extraction_identifier_lookup = {}
     confirmatory_pcr_identifier_lookup = {}
     tiling_pcr_identifier_lookup = {}
+    print(seqtracker[0])
     for sample in seqtracker:
         if sample["Sample ID"] in extraction_identifier_lookup:
             pass

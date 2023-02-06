@@ -66,4 +66,4 @@ first run `run_test_02.sh` to add projects to the database.Then run
 `nextflow run main_pipeline.nf -entry PROCESS_SEQ_DATA --scheme V1`
 
 * To combine the sequencing data with the sample information run
-`nextflow run main_pipeline.nf -entry ADD_SEQ_DATA `
+`nextflow run main_pipeline.nf -entry ADD_SEQ_DATA`
