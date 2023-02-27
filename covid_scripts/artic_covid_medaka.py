@@ -1,7 +1,6 @@
 import os
 import glob
 import pandas as pd
-from pathlib import Path
 
 class DuplicationError(Exception):
     pass
